@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MembersController } from './members/members.controller';
 import { MembersService } from './members/members.service';
 import { MembersModule } from './members/members.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MembersModule } from './members/members.module';
       logging: true,
     }),
     MembersModule,
+    CategoryModule,
   ],
   controllers: [AppController, MembersController],
   providers: [AppService, MembersService],

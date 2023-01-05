@@ -11,6 +11,7 @@ import { OrdersModule } from './orders/orders.module';
 import { ItemsModule } from './items/items.module';
 import { OrderItemModule } from './order_item/order_item.module';
 import { DeliveryModule } from './delivery/delivery.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -27,10 +28,12 @@ import { DeliveryModule } from './delivery/delivery.module';
       logging: true,
     }),
     MembersModule,
+
     OrdersModule,
     ItemsModule,
     OrderItemModule,
     DeliveryModule,
+    CategoryModule,
   ],
   controllers: [AppController, MembersController],
   providers: [AppService, MembersService],

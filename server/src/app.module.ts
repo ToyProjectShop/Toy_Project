@@ -7,6 +7,10 @@ import { ConfigModule } from '@nestjs/config';
 import { MembersController } from './members/members.controller';
 import { MembersService } from './members/members.service';
 import { MembersModule } from './members/members.module';
+import { OrdersModule } from './orders/orders.module';
+import { ItemsModule } from './items/items.module';
+import { OrderItemModule } from './order_item/order_item.module';
+import { DeliveryModule } from './delivery/delivery.module';
 
 @Module({
   imports: [
@@ -19,10 +23,14 @@ import { MembersModule } from './members/members.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false,
+      synchronize: true,
       logging: true,
     }),
     MembersModule,
+    OrdersModule,
+    ItemsModule,
+    OrderItemModule,
+    DeliveryModule,
   ],
   controllers: [AppController, MembersController],
   providers: [AppService, MembersService],

@@ -3,9 +3,9 @@ import { BaseEntity } from '../common/baseEntity/base.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
 
 @Entity()
-export class Adress extends BaseEntity {
+export class Address extends BaseEntity {
   @PrimaryGeneratedColumn()
-  adress_id: number;
+  address_id: number;
 
   @Column({ type: 'varchar' })
   city: string;
@@ -16,7 +16,7 @@ export class Adress extends BaseEntity {
   @Column({ type: 'integer' })
   zipcode: number;
 
-  @ManyToOne(() => Member, (member) => member.adress, {
+  @ManyToOne(() => Member, (member) => member.address, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

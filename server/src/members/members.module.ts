@@ -1,4 +1,4 @@
-import { Adress } from './adress.entity';
+import { Address } from './address.entity';
 import { MembersService } from './members.service';
 import { MembersController } from './members.controller';
 import { Member } from './members.entity';
@@ -7,7 +7,7 @@ import { Module } from '@nestjs/common';
 import { Point } from './point.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member, Point, Adress])],
+  imports: [TypeOrmModule.forFeature([Member, Point, Address])],
   controllers: [MembersController],
   providers: [MembersService],
 })

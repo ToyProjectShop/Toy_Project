@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { Delivery } from './delivery.entity';
+import { Cart_Item } from './cart_item.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
-  imports: [TypeOrmModule.forFeature([Delivery])],
+  imports: [TypeOrmModule.forFeature([Cart_Item])],
   controllers: [],
   providers: [],
 })
-export class DeliveryModule {}
+export class CartItemModule {}

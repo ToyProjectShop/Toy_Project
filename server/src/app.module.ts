@@ -9,8 +9,9 @@ import { MembersService } from './members/members.service';
 import { MembersModule } from './members/members.module';
 import { OrdersModule } from './orders/orders.module';
 import { ItemsModule } from './items/items.module';
-import { OrderItemModule } from './order_item/order_item.module';
-import { DeliveryModule } from './delivery/delivery.module';
+import { OrderItemModule } from './orders/order_item.module';
+import { CartModule } from './carts/cart.module';
+import { CartItemModule } from './carts/cart_item.module';
 import { CategoryModule } from './category/category.module';
 
 @Module({
@@ -32,7 +33,8 @@ import { CategoryModule } from './category/category.module';
     OrdersModule,
     ItemsModule,
     OrderItemModule,
-    DeliveryModule,
+    CartModule,
+    CartItemModule,
     CategoryModule,
   ],
   controllers: [AppController, MembersController],

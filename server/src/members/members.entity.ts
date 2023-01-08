@@ -1,4 +1,5 @@
-import { Adress } from './adress.entity';
+import { Address } from './address.entity';
+
 import { Point } from './point.entity';
 import { BaseEntity } from './../common/baseEntity/base.entity';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany } from 'typeorm';
@@ -32,6 +33,6 @@ export class Member extends BaseEntity {
   @JoinColumn()
   point: Point;
 
-  @OneToMany(() => Adress, (adress) => adress.member, { cascade: true })
-  adress: Adress[];
+  @OneToMany(() => Address, (address) => address.member, { cascade: true })
+  address: Address[];
 }

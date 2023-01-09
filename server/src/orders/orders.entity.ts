@@ -9,6 +9,13 @@ import {
 } from 'typeorm';
 import { Member } from '../members/members.entity';
 import { Order_Item } from './order_item.entity';
+
+export enum IsOrderStatus {
+  order_complete = '주문완료',
+  order_cancel = '주문취소',
+  default = '주문대기',
+}
+
 @Entity()
 export class Order extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
@@ -20,29 +27,33 @@ export class Order extends BaseEntity {
   @Column({ type: 'integer' })
   price: number;
 
-  @Column({ type: 'varchar' })
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: IsOrderStatus,
+    default: IsOrderStatus.default,
+  })
+  status: IsOrderStatus;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: '11' })
   city: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: '50' })
   street: string;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'tinyint' })
   zipcode: number;
 
-  @Column({ type: 'char' })
+  @Column({ type: 'char', length: 11 })
   phone: number;
 
-  @ManyToOne(() => Member, (member) => member.order)
-  @JoinColumn([
-    {
-      name: 'member_id',
-      referencedColumnName: 'member_id',
-    },
-  ])
-  member: Member;
+  // @ManyToOne(() => Member, (member) => member.order)
+  // @JoinColumn([
+  //   {
+  //     name: 'member_id',
+  //     referencedColumnName: 'member_id',
+  //   },
+  // ])
+  // member: Member;
 
   @OneToMany(() => Order_Item, (order_item) => order_item.order, {
     cascade: true,

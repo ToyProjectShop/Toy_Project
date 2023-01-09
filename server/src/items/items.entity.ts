@@ -8,14 +8,14 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Category } from '../category/category.entity';
-import { Order_Item } from 'src/orders/order_item.entity';
-import { Cart_Item } from 'src/carts/cart_item.entity';
+import { Order_Item } from '../orders/order_item.entity';
+import { Cart_Item } from '../carts/cart_item.entity';
 @Entity()
 export class Item extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   item_id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: '20' })
   item_name: string;
 
   @Column({ type: 'integer' })
@@ -24,7 +24,7 @@ export class Item extends BaseEntity {
   @Column({ type: 'varchar' })
   image: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: '150' })
   descritpion: string;
 
   @Column({ type: 'integer' })

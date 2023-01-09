@@ -19,7 +19,7 @@ export class Order_Item extends BaseEntity {
   ])
   order: Order;
 
-  @ManyToOne(() => Item, (item_id) => item_id.item_id, {
+  @ManyToOne(() => Item, (item_id) => item_id.order_item, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

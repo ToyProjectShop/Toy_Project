@@ -14,7 +14,7 @@ export class Cart_Item extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   cart_item_id: number;
 
-  @ManyToOne(() => Cart, (cart) => cart.cart_id, {
+  @ManyToOne(() => Cart, (cart) => cart.cart_item, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
@@ -26,7 +26,7 @@ export class Cart_Item extends BaseEntity {
   ])
   cart: Cart;
 
-  @ManyToOne(() => Item, (item) => item.item_id, {
+  @ManyToOne(() => Item, (item) => item.cart_item, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

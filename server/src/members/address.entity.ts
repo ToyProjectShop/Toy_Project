@@ -7,13 +7,13 @@ export class Address extends BaseEntity {
   @PrimaryGeneratedColumn()
   address_id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: 11 })
   city: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: 50 })
   street: string;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'tinyint' })
   zipcode: number;
 
   @ManyToOne(() => Member, (member) => member.address, {

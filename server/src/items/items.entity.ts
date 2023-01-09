@@ -1,12 +1,5 @@
 import { BaseEntity } from './../common/baseEntity/base.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Category } from '../category/category.entity';
 import { Order_Item } from '../orders/order_item.entity';
 import { Cart_Item } from '../carts/cart_item.entity';

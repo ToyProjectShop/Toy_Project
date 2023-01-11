@@ -26,10 +26,6 @@ export class CreateOrdersDto {
   readonly phone: string;
 
   @IsNotEmpty()
-  @IsString()
-  readonly status: string;
-
-  @IsNotEmpty()
   @IsNumber()
   readonly item_id: number;
 }

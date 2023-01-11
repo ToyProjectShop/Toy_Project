@@ -9,7 +9,7 @@ export enum IsOrderStatus {
   default = '주문대기',
 }
 
-@Entity()
+@Entity({ name: 'orders' })
 export class Order extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   order_id: number;

@@ -1,3 +1,5 @@
+import { BaseAPIDocument } from './common/swagger/swagger.documnet';
+import { SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/exception/http-exception.filter';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
@@ -10,6 +12,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  const config = new BaseAPIDocument().initializeOptions();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   app.use(cookieParser());
   // Entity @Exclude() 적용 비밀번호 노출 X

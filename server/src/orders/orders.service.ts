@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateOrdersDto } from './dto/createOrders.dto';
 import { IsOrderStatus, Order } from './orders.entity';
 import { Order_Item } from './order_item.entity';
 
@@ -32,4 +31,12 @@ export class OrdersService {
   }
 
   //2) 주문취소 하기 stutus order_complete-> order_cancel 업데이트 하기
+
+  async update(order_id) {
+    const result = await this.orderRepository.findOne({ where: { order_id } });
+    console.log('result: ', result);
+    result.status = IsOrderStatus.order_cancel;
+    await this.orderRepository.update({ order_id: order_id }, { status: IsOrderStatus.order_cancel });
+    return true;
+  }
 }

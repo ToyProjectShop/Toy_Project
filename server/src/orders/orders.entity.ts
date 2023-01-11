@@ -33,7 +33,7 @@ export class Order extends BaseEntity {
   @Column({ type: 'varchar', length: '50' })
   street: string;
 
-  @Column({ type: 'tinyint' })
+  @Column({ type: 'integer' })
   zipcode: number;
 
   @Column({ type: 'char', length: 11 })

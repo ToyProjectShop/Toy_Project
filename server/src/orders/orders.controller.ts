@@ -7,10 +7,11 @@ import { OrdersService } from './orders.service';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  //   @Post('/order')
-  //   async create(@Body() order: CreateOrdersDto): Promise<Order> {
-
-  //   }
+  @Post('/order')
+  async create(@Body() order: CreateOrdersDto): Promise<Order> {
+    const result = await this.ordersService.create(order);
+    return result;
+  }
   // update(order_id: number, updateOrderDto: UpdateOrderDto) {
   //   return `This action updates a #${id} population`;
   // }

@@ -6,9 +6,6 @@ export class Point extends BaseEntity {
   @PrimaryGeneratedColumn()
   point_id: number;
 
-  @Column({ type: 'date' })
-  expireDate: Date;
-
   @Column({ type: 'integer' })
   point: number;
 }

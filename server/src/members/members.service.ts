@@ -34,17 +34,15 @@ export class MembersService {
       phone: transformPhone,
       password: hashedPassword,
     });
-    console.log('saveUser', saveUser);
 
-    return await this.membersRepository.save(saveUser);
+    const member = await this.membersRepository.save(saveUser);
 
-    // address 등록
-    // const resultData = await this.addressRepository.save({
-    //   city,
-    //   street,
-    //   zipcode,
-    //   member,
-    // });
-    // return resultData;
+    await this.addressRepository.save({
+      city,
+      street,
+      zipcode: transformZipcode,
+      member,
+    });
+    return member.member_id;
   }
 }

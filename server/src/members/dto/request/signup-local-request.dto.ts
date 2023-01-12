@@ -12,11 +12,10 @@ export class SignupLocalRequestDto {
 
   @ApiProperty()
   @IsString()
-  readonly passoword: string;
+  readonly password: string;
 
   @ApiProperty()
-  @IsNumber()
-  readonly phone: number;
+  readonly phone;
 
   @ApiProperty()
   @IsString()
@@ -27,6 +26,5 @@ export class SignupLocalRequestDto {
   readonly street: string;
 
   @ApiProperty()
-  @IsString()
-  readonly zipcode: number;
+  readonly zipcode;
 }

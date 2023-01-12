@@ -21,21 +21,31 @@ export class Member extends BaseEntity {
   @Exclude()
   password: Binary;
 
-  @Column({ type: 'varchar', length: 10 })
+  @Column({ type: 'varchar', length: 10, nullable: true })
   provider: string;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', nullable: true })
   snsId: number;
 
   @Column({ type: 'char', length: 11 })
   phone: number;
 
   @OneToOne(() => Point)
-  @JoinColumn()
+  @JoinColumn([
+    {
+      name: 'point_id',
+      referencedColumnName: 'point_id',
+    },
+  ])
   point: Point;
 
   @OneToOne(() => Cart)
-  @JoinColumn()
+  @JoinColumn([
+    {
+      name: 'cart_id',
+      referencedColumnName: 'cart_id',
+    },
+  ])
   cart: Cart;
 
   @OneToMany(() => Address, (address) => address.member, { cascade: true })

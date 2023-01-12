@@ -4,29 +4,29 @@ import { IsEmail, IsNumber, IsString } from 'class-validator';
 export class SignupLocalRequestDto {
   @ApiProperty()
   @IsEmail()
-  email: string;
+  readonly email: string;
 
   @ApiProperty()
   @IsString()
-  username: string;
+  readonly username: string;
 
   @ApiProperty()
   @IsString()
-  passoword: string;
+  readonly passoword: string;
 
   @ApiProperty()
   @IsNumber()
-  phone: number;
+  readonly phone: number;
 
   @ApiProperty()
   @IsString()
-  city: string;
+  readonly city: string;
 
   @ApiProperty()
   @IsString()
-  street: string;
+  readonly street: string;
 
   @ApiProperty()
   @IsString()
-  zipcode: number;
+  readonly zipcode: number;
 }

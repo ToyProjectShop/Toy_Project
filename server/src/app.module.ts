@@ -4,8 +4,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { MembersController } from './members/members.controller';
-import { MembersService } from './members/members.service';
 import { MembersModule } from './members/members.module';
 import { OrdersModule } from './orders/orders.module';
 import { ItemsModule } from './items/items.module';
@@ -32,8 +30,8 @@ import { CategoryModule } from './category/category.module';
     CartModule,
     CategoryModule,
   ],
-  controllers: [AppController, MembersController],
-  providers: [AppService, MembersService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

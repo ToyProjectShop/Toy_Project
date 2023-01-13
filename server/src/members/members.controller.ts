@@ -17,7 +17,7 @@ export class MembersController {
   })
   @ApiOperation({ summary: '로컬 회원가입' })
   @Post('/signup')
-  async create(@Body() signupDto: SignupLocalRequestDto) {
+  async signUp(@Body() signupDto: SignupLocalRequestDto) {
     return await this.membersService.signUp(signupDto);
   }
 }

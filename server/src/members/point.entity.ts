@@ -1,5 +1,6 @@
+import { Member } from './members.entity';
 import { BaseEntity } from './../common/baseEntity/base.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 export class Point extends BaseEntity {
@@ -8,4 +9,13 @@ export class Point extends BaseEntity {
 
   @Column({ type: 'integer' })
   point: number;
+
+  @OneToOne(() => Member)
+  @JoinColumn([
+    {
+      name: 'member_id',
+      referencedColumnName: 'member_id',
+    },
+  ])
+  member: Member;
 }

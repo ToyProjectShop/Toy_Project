@@ -1,10 +1,8 @@
 import { Address } from './address.entity';
-import { Point } from './point.entity';
 import { BaseEntity } from './../common/baseEntity/base.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany, Binary } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, Binary } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Order } from 'src/orders/orders.entity';
-import { Cart } from 'src/carts/cart.entity';
 
 @Entity()
 export class Member extends BaseEntity {
@@ -29,24 +27,6 @@ export class Member extends BaseEntity {
 
   @Column({ type: 'char', length: 11 })
   phone: number;
-
-  @OneToOne(() => Point)
-  @JoinColumn([
-    {
-      name: 'point_id',
-      referencedColumnName: 'point_id',
-    },
-  ])
-  point: Point;
-
-  @OneToOne(() => Cart)
-  @JoinColumn([
-    {
-      name: 'cart_id',
-      referencedColumnName: 'cart_id',
-    },
-  ])
-  cart: Cart;
 
   @OneToMany(() => Address, (address) => address.member, { cascade: true })
   address: Address[];

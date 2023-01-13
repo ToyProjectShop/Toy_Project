@@ -1,3 +1,4 @@
+import { Point } from './point.entity';
 import { Address } from './address.entity';
 import { SignupLocalRequestDto } from './dto/request/signup-local-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +14,8 @@ export class MembersService {
     private membersRepository: Repository<Member>,
     @InjectRepository(Address)
     private addressRepository: Repository<Address>,
+    @InjectRepository(Point)
+    private pointRepository: Repository<Point>,
   ) {}
 
   async signUp(signupDto: SignupLocalRequestDto) {
@@ -41,6 +44,11 @@ export class MembersService {
       city,
       street,
       zipcode: transformZipcode,
+      member,
+    });
+
+    await this.pointRepository.save({
+      point: 5000,
       member,
     });
     return member.member_id;

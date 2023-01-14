@@ -1,3 +1,5 @@
+import { LoginRequestDto } from './dto/request/login-request.dto';
+import { AuthService } from './../auth/auth.service';
 import { UndefinedtoNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
 import { SignupLocalRequestDto } from './dto/request/signup-local-request.dto';
 import { MembersService } from './members.service';
@@ -8,7 +10,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @UseInterceptors(UndefinedtoNullInterceptor)
 @Controller('api/auth')
 export class MembersController {
-  constructor(private readonly membersService: MembersService) {}
+  constructor(private readonly membersService: MembersService, private readonly authService: AuthService) {}
 
   @ApiResponse({
     type: SignupLocalRequestDto,
@@ -17,7 +19,13 @@ export class MembersController {
   })
   @ApiOperation({ summary: '로컬 회원가입' })
   @Post('/signup')
-  async signUp(@Body() signupDto: SignupLocalRequestDto) {
+  async signUp(@Body() signupDto: SignupLocalRequestDto): Promise<number> {
     return await this.membersService.signUp(signupDto);
+  }
+
+  @ApiOperation({ summary: '로그인' })
+  @Post('/login')
+  logIn(@Body() loginDto: LoginRequestDto) {
+    return this.authService.jwtLogIn(loginDto);
   }
 }

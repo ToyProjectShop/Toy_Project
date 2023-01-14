@@ -11,14 +11,14 @@ import * as bcrypt from 'bcrypt';
 export class MembersService {
   constructor(
     @InjectRepository(Member)
-    private membersRepository: Repository<Member>,
+    private readonly membersRepository: Repository<Member>,
     @InjectRepository(Address)
-    private addressRepository: Repository<Address>,
+    private readonly addressRepository: Repository<Address>,
     @InjectRepository(Point)
-    private pointRepository: Repository<Point>,
+    private readonly pointRepository: Repository<Point>,
   ) {}
 
-  async signUp(signupDto: SignupLocalRequestDto) {
+  async signUp(signupDto: SignupLocalRequestDto): Promise<number> {
     const { email, username, password, phone, city, street, zipcode } = signupDto;
     const transformPhone = parseInt(phone);
     const transformZipcode = parseInt(zipcode);

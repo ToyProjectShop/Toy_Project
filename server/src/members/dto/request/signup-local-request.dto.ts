@@ -1,30 +1,51 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class SignupLocalRequestDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'test@test.com',
+    description: 'email',
+  })
   @IsEmail()
   readonly email: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'test',
+    description: 'name',
+  })
   @IsString()
   readonly username: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '1234',
+    description: 'password',
+  })
   @IsString()
   readonly password: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '01012345678',
+    description: 'phoneNumber',
+  })
   readonly phone;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '고양시',
+    description: 'city',
+  })
   @IsString()
   readonly city: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '마두동',
+    description: 'street',
+  })
   @IsString()
   readonly street: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '12345',
+    description: 'zipcode',
+  })
   readonly zipcode;
 }

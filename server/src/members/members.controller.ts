@@ -1,16 +1,26 @@
+import { Member } from './members.entity';
+import { JwtAuthGuard } from './../auth/jwt/jwt.guard';
 import { LoginRequestDto } from './dto/request/login-request.dto';
 import { AuthService } from './../auth/auth.service';
 import { UndefinedtoNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
 import { SignupLocalRequestDto } from './dto/request/signup-local-request.dto';
 import { MembersService } from './members.service';
-import { Controller, Post, Body, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, Get, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from 'src/common/decorators/user.decorator';
 
 @ApiTags('MEMBERS')
 @UseInterceptors(UndefinedtoNullInterceptor)
 @Controller('api/auth')
 export class MembersController {
   constructor(private readonly membersService: MembersService, private readonly authService: AuthService) {}
+
+  @ApiOperation({ summary: '회원정보' })
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  getCurrentMember(@CurrentUser() user) {
+    return user;
+  }
 
   @ApiResponse({
     type: SignupLocalRequestDto,

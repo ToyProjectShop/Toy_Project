@@ -33,8 +33,8 @@ export class MembersController {
   })
   @ApiOperation({ summary: '로컬 회원가입' })
   @Post('/signup')
-  async signUp(@Body() signupDto: SignupLocalRequestDto): Promise<number> {
-    return await this.membersService.signUp(signupDto);
+  signUp(@Body() signupDto: SignupLocalRequestDto): Promise<number> {
+    return this.membersService.signUp(signupDto);
   }
 
   @ApiResponse({

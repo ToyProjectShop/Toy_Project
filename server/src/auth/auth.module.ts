@@ -1,3 +1,4 @@
+import { KakaoStrategy } from './jwt/kakao.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Member } from './../members/members.entity';
 import { JwtStrategy } from './jwt/jwt.strategy';
@@ -15,7 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, KakaoStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

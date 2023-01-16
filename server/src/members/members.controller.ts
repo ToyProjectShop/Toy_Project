@@ -1,3 +1,4 @@
+import { KakaoAuthGuard } from './../auth/jwt/kakao.guard';
 import { JwtAuthGuard } from './../auth/jwt/jwt.guard';
 import { LoginRequestDto } from './dto/request/login-request.dto';
 import { AuthService } from './../auth/auth.service';
@@ -46,5 +47,24 @@ export class MembersController {
   @Post('/login')
   logIn(@Body() loginDto: LoginRequestDto) {
     return this.authService.jwtLogIn(loginDto);
+  }
+
+  @ApiOperation({ summary: '카카오 로그인 접근 API' })
+  @UseGuards(KakaoAuthGuard)
+  @Get('/kakao')
+  kakao() {
+    return 'ok';
+  }
+
+  @ApiResponse({
+    type: CurrentUser,
+    status: 200,
+    description: '카카오 로그인 Response',
+  })
+  @ApiOperation({ summary: '카카오 로그인' })
+  @UseGuards(KakaoAuthGuard)
+  @Get('/kakao-callback')
+  kakaoLogIn(@CurrentUser() user) {
+    return this.authService.kakaoLogIn(user);
   }
 }

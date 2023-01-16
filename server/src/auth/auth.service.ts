@@ -40,4 +40,25 @@ export class AuthService {
       token: this.jwtService.sign(payload, { secret: process.env.JWT_KEY }),
     };
   }
+
+  async kakaoLogIn(user) {
+    console.log('authService user', user);
+    const { email } = user;
+
+    const member = await this.membersRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!member) {
+      throw new ConflictException('이메일과 비밀번호를 확인해주세요.');
+    }
+
+    const payload = { email: email, sub: member.member_id };
+
+    return {
+      token: this.jwtService.sign(payload, { secret: process.env.JWT_KEY }),
+    };
+  }
 }

@@ -65,7 +65,7 @@ export class MypageService {
       const addressData = await this.addressRepository
         .createQueryBuilder('a')
         .leftJoinAndSelect('a.member', 'm')
-        .where('m.member_id = :id', { id: user.member_id })
+        .where('a.member_id = :id', { id: user.member_id })
         .getOne();
 
       const data = await this.addressRepository.update(addressData.address_id, addressDto);

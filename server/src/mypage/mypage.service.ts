@@ -1,3 +1,4 @@
+import { AddressRequestDto } from './dto/address-request.dto';
 import { EditPasswordDto } from './dto/edit-password-request.dto';
 import { EditUsernameDto } from './dto/edit-username-request.dto';
 import { Point } from './../members/point.entity';
@@ -48,6 +49,26 @@ export class MypageService {
 
       //DB에서 error가 발생하면 catch문으로 이동하게 코드 작성
       const data = await this.membersRepository.update(user.member_id, updatePassword);
+      return data;
+    } catch {
+      throw new HttpException('1105', 412);
+    }
+  }
+
+  /**
+   * 배송지 수정
+   * @param user
+   * @param addressDto
+   */
+  async updateAddress(user: Member, addressDto: AddressRequestDto) {
+    try {
+      const addressData = await this.addressRepository
+        .createQueryBuilder('a')
+        .leftJoinAndSelect('a.member', 'm')
+        .where('m.member_id = :id', { id: user.member_id })
+        .getOne();
+
+      const data = await this.addressRepository.update(addressData.address_id, addressDto);
       return data;
     } catch {
       throw new HttpException('1105', 412);

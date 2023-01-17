@@ -1,3 +1,4 @@
+import { AddressRequestDto } from './dto/address-request.dto';
 import { EditPasswordDto } from './dto/edit-password-request.dto';
 import { Member } from './../members/members.entity';
 import { EditUsernameDto } from './dto/edit-username-request.dto';
@@ -36,5 +37,17 @@ export class MypageController {
   async updatePassword(@CurrentUser() user: Member, @Body() passwordDto: EditPasswordDto) {
     await this.mypageService.updatePassword(user, passwordDto);
     return { code: 3003 };
+  }
+
+  @ApiResponse({
+    status: 201,
+    description: '배송지 수정',
+  })
+  @ApiOperation({ summary: '배송지 수정' })
+  @UseGuards(JwtAuthGuard)
+  @Patch('/address')
+  async updateAddress(@CurrentUser() user: Member, @Body() addressDto: AddressRequestDto) {
+    await this.mypageService.updateAddress(user, addressDto);
+    return { code: 3002 };
   }
 }

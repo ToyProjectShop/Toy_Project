@@ -24,10 +24,10 @@ export class MypageService {
    * @param user
    * @param editDto
    */
-  async updateUsername(user: Member, editDto: EditUsernameDto) {
+  async updateUsername(user: Member, usernameDto: EditUsernameDto) {
     try {
       //DB에서 error가 발생하면 catch문으로 이동하게 코드 작성
-      const data = await this.membersRepository.update(user.member_id, editDto);
+      const data = await this.membersRepository.update(user.member_id, usernameDto);
       return data;
     } catch {
       throw new HttpException('1103', 412);
@@ -39,9 +39,9 @@ export class MypageService {
    * @param user
    * @param editDto
    */
-  async updatePassword(user: Member, editDto: EditPasswordDto) {
+  async updatePassword(user: Member, passwordDto: EditPasswordDto) {
     try {
-      const hashedPassword = await bcrypt.hash(editDto.password, 6);
+      const hashedPassword = await bcrypt.hash(passwordDto.password, 6);
       const updatePassword = this.membersRepository.create({
         password: hashedPassword,
       });

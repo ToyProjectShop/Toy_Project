@@ -21,8 +21,8 @@ export class MypageController {
   @ApiOperation({ summary: '회원이름 수정' })
   @UseGuards(JwtAuthGuard)
   @Patch('/username')
-  async updateUsername(@CurrentUser() user: Member, @Body() editDto: EditUsernameDto) {
-    await this.mypageService.updateUsername(user, editDto);
+  async updateUsername(@CurrentUser() user: Member, @Body() usernameDto: EditUsernameDto) {
+    await this.mypageService.updateUsername(user, usernameDto);
     return { code: 3001 };
   }
 
@@ -33,8 +33,8 @@ export class MypageController {
   @ApiOperation({ summary: '비밀번호 수정' })
   @UseGuards(JwtAuthGuard)
   @Patch('/password')
-  async updatePassword(@CurrentUser() user: Member, @Body() editDto: EditPasswordDto) {
-    await this.mypageService.updatePassword(user, editDto);
+  async updatePassword(@CurrentUser() user: Member, @Body() passwordDto: EditPasswordDto) {
+    await this.mypageService.updatePassword(user, passwordDto);
     return { code: 3003 };
   }
 }

@@ -13,7 +13,7 @@ export class Address extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   street: string;
 
-  @Column({ type: 'tinyint' })
+  @Column({ type: 'integer' })
   zipcode: number;
 
   @ManyToOne(() => Member, (member) => member.address, {

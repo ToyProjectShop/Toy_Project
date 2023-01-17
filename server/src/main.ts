@@ -15,7 +15,7 @@ async function bootstrap() {
 
   const config = new BaseAPIDocument().initializeOptions();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   app.use(cookieParser());
   // Entity @Exclude() 적용 비밀번호 노출 X

@@ -13,10 +13,11 @@ export class OrdersService {
     private readonly order_ItemRepository: Repository<Order_Item>,
   ) {}
 
-  //1) 주문 저장하기
-  async create(orderDto): Promise<Order> {
-    const { count, price, city, street, zipcode, phone, item_id } = orderDto;
+  // //1) 주문 저장하기
+  async create(user, orderDto): Promise<Order> {
+    const { count, price, city, street, zipcode, phone } = orderDto;
 
+    //주문정보
     const order = new Order();
     order.count = count;
     order.price = price;
@@ -26,7 +27,8 @@ export class OrdersService {
     order.phone = phone;
     order.status = IsOrderStatus.order_complete;
 
-    const result = await this.orderRepository.save(order);
+    // 주문정보,member_id Order테이블에 저장하기
+    const result = await this.orderRepository.save({ ...order, member_id: user.member_id });
     return result;
   }
 

@@ -54,13 +54,4 @@ export class CreateOrdersDto {
   @IsNotEmpty()
   @IsString()
   readonly phone: string;
-
-  @ApiProperty({
-    example: '1',
-    description: '상품 id',
-    required: true,
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  readonly item_id: number;
 }

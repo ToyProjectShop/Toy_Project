@@ -25,7 +25,7 @@ export class OrdersController {
   })
   @Post()
   async create(@CurrentUser() user, @Body() orderDto: CreateOrdersDto): Promise<Order> {
-    const result = await this.ordersService.create(orderDto);
+    const result = await this.ordersService.create(user, orderDto);
     return result;
   }
 

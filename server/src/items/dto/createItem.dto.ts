@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEmpty, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateItemDto {
   @ApiProperty({
@@ -21,6 +21,14 @@ export class CreateItemDto {
   readonly price: number;
 
   @ApiProperty({
+    example: '상품 이미지',
+    description: '상품 이미지',
+    required: false,
+  })
+  @IsString()
+  readonly image: string;
+
+  @ApiProperty({
     example: '로지텍 인체공학 키보드',
     description: '상품설명',
     required: true,
@@ -30,11 +38,20 @@ export class CreateItemDto {
   readonly description: string;
 
   @ApiProperty({
-    example: '1',
-    description: '재고수',
+    example: '10',
+    description: '재고 수',
     required: true,
   })
   @IsNotEmpty()
   @IsNumber()
   readonly stockquantity: number;
+
+  @ApiProperty({
+    example: '1',
+    description: 'category id',
+    required: true,
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  readonly category_id: number;
 }

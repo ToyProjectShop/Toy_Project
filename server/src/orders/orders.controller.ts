@@ -9,7 +9,7 @@ import { OrdersService } from './orders.service';
 
 @ApiTags('ORDERS')
 @UseInterceptors(UndefinedtoNullInterceptor)
-@Controller('order')
+@Controller('api/order')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
   //주문하기

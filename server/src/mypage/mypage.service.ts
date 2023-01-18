@@ -1,3 +1,4 @@
+import { PointRequestDto } from './dto/point-request.dto';
 import { AddressRequestDto } from './dto/address-request.dto';
 import { EditPasswordDto } from './dto/edit-password-request.dto';
 import { EditUsernameDto } from './dto/edit-username-request.dto';
@@ -69,6 +70,33 @@ export class MypageService {
         .getOne();
 
       const data = await this.addressRepository.update(addressData.address_id, addressDto);
+      return data;
+    } catch {
+      throw new HttpException('1105', 412);
+    }
+  }
+
+  /**
+   * 포인트 충전
+   * @param user
+   * @param pointDto
+   */
+  async updatePoint(user: Member, pointDto: PointRequestDto) {
+    // parseInt로 pointDto.point 형변환
+    let transformPoint = parseInt(pointDto.point);
+    try {
+      const pointData = await this.pointRepository
+        .createQueryBuilder('p')
+        .leftJoinAndSelect('p.member', 'm')
+        .where('p.member = :id', { id: user.member_id })
+        .getOne();
+
+      transformPoint += pointData.point;
+      const updatePoint = this.pointRepository.create({
+        point: transformPoint,
+      });
+
+      const data = await this.pointRepository.update(pointData.point_id, updatePoint);
       return data;
     } catch {
       throw new HttpException('1105', 412);

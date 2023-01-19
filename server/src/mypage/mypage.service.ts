@@ -1,3 +1,4 @@
+import { Order } from './../orders/orders.entity';
 import { PointRequestDto } from './dto/point-request.dto';
 import { AddressRequestDto } from './dto/address-request.dto';
 import { EditPasswordDto } from './dto/edit-password-request.dto';
@@ -19,6 +20,8 @@ export class MypageService {
     private readonly addressRepository: Repository<Address>,
     @InjectRepository(Point)
     private readonly pointRepository: Repository<Point>,
+    @InjectRepository(Order)
+    private readonly ordersRepository: Repository<Order>,
   ) {}
 
   /**
@@ -98,6 +101,23 @@ export class MypageService {
 
       const data = await this.pointRepository.update(pointData.point_id, updatePoint);
       return data;
+    } catch {
+      throw new HttpException('1105', 412);
+    }
+  }
+
+  /**
+   * 주문목록 조회
+   * @param user
+   */
+  async findOrderByMemberId(user: Member) {
+    try {
+      const orderData = await this.ordersRepository
+        .createQueryBuilder('o')
+        .leftJoinAndSelect('o.member', 'm')
+        .where('o.member = :id', { id: user.member_id })
+        .getMany();
+      return orderData;
     } catch {
       throw new HttpException('1105', 412);
     }

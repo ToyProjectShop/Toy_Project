@@ -8,7 +8,8 @@ import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { MypageService } from './mypage.service';
 import { UndefinedtoNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Controller, Patch, UseInterceptors, UseGuards, Body, Post } from '@nestjs/common';
+import { Controller, Patch, UseInterceptors, UseGuards, Body, Post, Get } from '@nestjs/common';
+import { Order } from 'src/orders/orders.entity';
 
 @ApiTags('MyPage')
 @UseInterceptors(UndefinedtoNullInterceptor)
@@ -62,5 +63,17 @@ export class MypageController {
   async updatePoint(@CurrentUser() user: Member, @Body() pointDto: PointRequestDto) {
     await this.mypageService.updatePoint(user, pointDto);
     return { code: 3004 };
+  }
+
+  @ApiResponse({
+    status: 201,
+    description: '주문목록 조회',
+  })
+  @ApiOperation({ summary: '주문목록 조회' })
+  @UseGuards(JwtAuthGuard)
+  @Get('/orderlist')
+  async findOrderByMemberId(@CurrentUser() user: Member): Promise<Order[]> {
+    const data = await this.mypageService.findOrderByMemberId(user);
+    return data;
   }
 }

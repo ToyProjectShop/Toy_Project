@@ -14,7 +14,7 @@ export class Item extends BaseEntity {
   @Column({ type: 'integer' })
   price: number;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar' })
   image: string;
 
   @Column({ type: 'varchar', length: '150' })

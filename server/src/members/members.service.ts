@@ -1,3 +1,4 @@
+import { Cart } from './../carts/cart.entity';
 import { Point } from './point.entity';
 import { Address } from './address.entity';
 import { SignupLocalRequestDto } from './dto/request/signup-local-request.dto';
@@ -16,6 +17,8 @@ export class MembersService {
     private readonly addressRepository: Repository<Address>,
     @InjectRepository(Point)
     private readonly pointRepository: Repository<Point>,
+    @InjectRepository(Cart)
+    private readonly cartRepository: Repository<Cart>,
   ) {}
 
   async signUp(signupDto: SignupLocalRequestDto): Promise<number> {
@@ -49,6 +52,12 @@ export class MembersService {
 
     await this.pointRepository.save({
       point: 5000,
+      member,
+    });
+
+    await this.cartRepository.save({
+      count: 0,
+      price: 0,
       member,
     });
     return member.member_id;

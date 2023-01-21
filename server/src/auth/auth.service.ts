@@ -37,7 +37,7 @@ export class AuthService {
     console.log(payload);
 
     return {
-      token: this.jwtService.sign(payload, { secret: process.env.JWT_KEY }),
+      token: this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET }),
     };
   }
 
@@ -58,7 +58,7 @@ export class AuthService {
     const payload = { email: email, sub: member.member_id };
 
     return {
-      token: this.jwtService.sign(payload, { secret: process.env.JWT_KEY }),
+      token: this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET }),
     };
   }
 }

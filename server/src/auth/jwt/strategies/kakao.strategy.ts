@@ -1,4 +1,4 @@
-import { Member } from './../../members/members.entity';
+import { Member } from '../../../members/members.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';

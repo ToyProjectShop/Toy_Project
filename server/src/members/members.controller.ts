@@ -1,5 +1,6 @@
-import { KakaoAuthGuard } from './../auth/jwt/kakao.guard';
-import { JwtAuthGuard } from './../auth/jwt/jwt.guard';
+import { JwtRefreshAuthGuard } from './../auth/jwt/guards/jwt-refresh.guard';
+import { KakaoAuthGuard } from '../auth/jwt/guards/kakao.guard';
+import { JwtAuthGuard } from '../auth/jwt/guards/jwt.guard';
 import { LoginRequestDto } from './dto/request/login-request.dto';
 import { AuthService } from './../auth/auth.service';
 import { UndefinedtoNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
@@ -47,6 +48,17 @@ export class MembersController {
   @Post('/login')
   logIn(@Body() loginDto: LoginRequestDto) {
     return this.authService.jwtLogIn(loginDto);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'refreshToken success',
+  })
+  @UseGuards(JwtRefreshAuthGuard)
+  @Get('/refresh')
+  refresh(@CurrentUser() user) {
+    const result = this.authService.jwtLrefreshTokenogIn(user);
+    return result;
   }
 
   @ApiOperation({ summary: '카카오 로그인 접근 API' })

@@ -3,7 +3,7 @@ import { AddressRequestDto } from './dto/address-request.dto';
 import { EditPasswordDto } from './dto/edit-password-request.dto';
 import { Member } from './../members/members.entity';
 import { EditUsernameDto } from './dto/edit-username-request.dto';
-import { JwtAuthGuard } from './../auth/jwt/jwt.guard';
+import { JwtAuthGuard } from '../auth/jwt/guards/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { MypageService } from './mypage.service';
 import { UndefinedtoNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';

@@ -29,7 +29,7 @@ export class Member extends BaseEntity {
   phone: number;
 
   @Column({ type: 'varchar', nullable: true })
-  refreshToken: string;
+  refreshToken?: string;
 
   @OneToMany(() => Address, (address) => address.member, { cascade: true })
   address: Address[];

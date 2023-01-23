@@ -19,13 +19,4 @@ export class CreateCartDto {
   @IsNotEmpty()
   @IsNumber()
   readonly price: number;
-
-  @ApiProperty({
-    example: '1',
-    description: 'item id',
-    required: true,
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  readonly item_id: number;
 }

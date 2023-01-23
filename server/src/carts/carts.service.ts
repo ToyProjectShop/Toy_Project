@@ -30,27 +30,35 @@ export class CartsService {
    * Body에서 받은 count, price로 업데이트 필요 (디폴트는 0,0 임)
    * Cart_Item 테이블 cart_id cartRepository에서 findOne, item_id itemRepository에서 findOne
    * (중간 테이블)에 cart_id, item_id를 저장 로직
+   * 장바구니에 상품이 담기면 item테이블 stockquantity에서 재고를 빼주는 로직
+   * item 테이블에 재고가 없으면 장바구니 에러 로직
    * @returns api 명세서에 작성한 응답 코드
    */
   async createCart(user, createCartDto, item_id): Promise<any> {
+    //현재 유저의 장바구니에 상품 개수와 가격 업데이트
     const savememberid = await this.cartsRepository
       .createQueryBuilder('cart')
       .leftJoinAndSelect('cart.member', 'member')
       .where('cart.member= :id', { id: user.member_id })
       .getOne();
 
-    const isupdated = await this.cartsRepository.update(savememberid.cart_id, createCartDto);
+    let updatecount = parseInt(createCartDto.count);
+    let updateprice = parseInt(createCartDto.price);
+    updatecount += savememberid.count;
+    updateprice += savememberid.price;
 
-    // let updatecount = parseInt(createCartDto.count);
-    // let updateprice = parseInt(createCartDto.price);
-    // updatecount += savememberid.count;
-    // updateprice += savememberid.price;
-    // const savecount = this.cartsRepository.create({ count: updatecount });
-    // const saveprice = this.cartsRepository.create({ price: updateprice });
+    const savecount = this.cartsRepository.create({ count: updatecount });
+    const saveprice = this.cartsRepository.create({ price: updateprice });
 
-    // const saveData = await this.cartsRepository.update(savememberid.cart_id, savecount);
-    // await this.cartsRepository.update(savememberid.cart_id, saveprice);
-    // return saveData;
+    const saveData = await this.cartsRepository.update(savememberid.cart_id, savecount);
+    await this.cartsRepository.update(savememberid.cart_id, saveprice);
+
+    //중간테이블 Cart_Item에 cart_id, item_id 저장
+    const findcartid = await this.cartsRepository.findOne({ where: { cart_id: savememberid.cart_id } });
+    const itemid = item_id.item_id;
+    const finditemid = await this.itemRepository.findOne({ where: { item_id: itemid } });
+
+    const saveCartItem = await this.cart_ItemRepository.save({ cart: findcartid, item: finditemid });
   }
 
   //장바구니 수정

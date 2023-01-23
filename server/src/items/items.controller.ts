@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { userInfo } from 'os';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { JwtAuthGuard } from 'src/auth/jwt/guards/jwt.guard';
 import { Category } from 'src/category/category.entity';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { UndefinedtoNullInterceptor } from 'src/common/interceptors/undefinedToNull.interceptor';

@@ -20,45 +20,47 @@ export class CartsService {
   ) {}
 
   /** 장바구니 생성
-   * @currentUser에서 장바구니 테이블에 member_id가져와서 user라는 변수에 넣어주기
-   * @param user (current user의 member_id가 담겨있다)
-   * querybuilder 또는 relations로 member_id를 조회해서 변수에 담고 Cart 레포에 저장  cart_id 1 member_id 1 count 0 price 0
-   * @param createCartDto (프런트에서 전달한 상품정보가 담겼다 count, price)
-   * await this.cartRepository.update({cart_id},{creatCartDto})
-   * @Param item_id
-   * @Body 로 들어온 정보들로 장바구니 테이블 업데이트
-   * Body에서 받은 count, price로 업데이트 필요 (디폴트는 0,0 임)
-   * Cart_Item 테이블 cart_id cartRepository에서 findOne, item_id itemRepository에서 findOne
-   * (중간 테이블)에 cart_id, item_id를 저장 로직
-   * 장바구니에 상품이 담기면 item테이블 stockquantity에서 재고를 빼주는 로직
-   * item 테이블에 재고가 없으면 장바구니 에러 로직
+   * 회원가입이 되면 Cart table에 member_id가 자동으로 생성된다. count와 price 디폴트값은 0이다.
+   * @currentUser에서 현재 로그인상태의 유저 정보를 user라는 변수에 담는다
+   * @param user 현재 유저의 Member 테이블의 정보가 객체로 담겨있다
+   * @Param item_id, 장바구니에 담는 상품의 item_id가 객체로 담겨있다
+   * @Body 에는 createCartDto의 장바구니에 담을 상품의 정보가 담겨있다. 이 정보로 장바구니 테이블의 count,price를 업데이트 하는 로직 필요
+   * Cart_Item(중간 테이블)에 cart_id, item_id를 저장 로직 필요
+   * 장바구니에 담으려는 상품의 재고 확인 로직 필요
    * @returns api 명세서에 작성한 응답 코드
    */
   async createCart(user, createCartDto, item_id): Promise<any> {
-    //현재 유저의 장바구니에 상품 개수와 가격 업데이트
-    const savememberid = await this.cartsRepository
-      .createQueryBuilder('cart')
-      .leftJoinAndSelect('cart.member', 'member')
-      .where('cart.member= :id', { id: user.member_id })
-      .getOne();
+    //장바구니에 담으려는 상품의 재고 확인, 재고가 있다면 현재 유저의 장바구니 상품 개수와 가격 업데이트
+    const stockcheck = await this.itemRepository.findOne({ where: { item_id: item_id.item_id } });
+    const itemcount = parseInt(createCartDto.count);
 
-    let updatecount = parseInt(createCartDto.count);
-    let updateprice = parseInt(createCartDto.price);
-    updatecount += savememberid.count;
-    updateprice += savememberid.price;
+    if (stockcheck.stockquantity >= itemcount) {
+      const savememberid = await this.cartsRepository
+        .createQueryBuilder('cart')
+        .leftJoinAndSelect('cart.member', 'member')
+        .where('cart.member= :id', { id: user.member_id })
+        .getOne();
 
-    const savecount = this.cartsRepository.create({ count: updatecount });
-    const saveprice = this.cartsRepository.create({ price: updateprice });
+      let updatecount = parseInt(createCartDto.count);
+      let updateprice = parseInt(createCartDto.price);
+      updatecount += savememberid.count;
+      updateprice += savememberid.price;
 
-    const saveData = await this.cartsRepository.update(savememberid.cart_id, savecount);
-    await this.cartsRepository.update(savememberid.cart_id, saveprice);
+      const savecount = this.cartsRepository.create({ count: updatecount });
+      const saveprice = this.cartsRepository.create({ price: updateprice });
 
-    //중간테이블 Cart_Item에 cart_id, item_id 저장
-    const findcartid = await this.cartsRepository.findOne({ where: { cart_id: savememberid.cart_id } });
-    const itemid = item_id.item_id;
-    const finditemid = await this.itemRepository.findOne({ where: { item_id: itemid } });
+      const saveData = await this.cartsRepository.update(savememberid.cart_id, savecount);
+      await this.cartsRepository.update(savememberid.cart_id, saveprice);
 
-    const saveCartItem = await this.cart_ItemRepository.save({ cart: findcartid, item: finditemid });
+      //중간테이블 Cart_Item에 cart_id, item_id 저장
+      const findcartid = await this.cartsRepository.findOne({ where: { cart_id: savememberid.cart_id } });
+      const itemid = item_id.item_id;
+      const finditemid = await this.itemRepository.findOne({ where: { item_id: itemid } });
+
+      const saveCartItem = await this.cart_ItemRepository.save({ cart: findcartid, item: finditemid });
+    } else {
+      throw new HttpException('4100', 400);
+    }
   }
 
   //장바구니 수정

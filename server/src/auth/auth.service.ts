@@ -47,7 +47,7 @@ export class AuthService {
     };
   }
 
-  async jwtLrefreshTokenogIn(user: Member) {
+  async jwtRefreshTokenLogIn(user: Member) {
     const payload = { email: user.email, sub: user.member_id };
 
     const jwtAccessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1h' });

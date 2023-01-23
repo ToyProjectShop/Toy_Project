@@ -57,7 +57,7 @@ export class MembersController {
   @UseGuards(JwtRefreshAuthGuard)
   @Get('/refresh')
   refresh(@CurrentUser() user) {
-    const result = this.authService.jwtLrefreshTokenogIn(user);
+    const result = this.authService.jwtRefreshTokenLogIn(user);
     return result;
   }
 

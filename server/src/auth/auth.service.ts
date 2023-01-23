@@ -1,7 +1,7 @@
 import { LoginRequestDto } from './../members/dto/request/login-request.dto';
 import { Member } from './../members/members.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, ConflictException, ConsoleLogger } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';

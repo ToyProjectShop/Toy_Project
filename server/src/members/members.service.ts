@@ -50,13 +50,10 @@ export class MembersService {
     });
 
     await this.pointRepository.save({
-      point: 5000,
       member,
     });
 
     await this.cartRepository.save({
-      count: 0,
-      price: 0,
       member,
     });
     return member.member_id;

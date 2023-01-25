@@ -8,11 +8,11 @@ export class Cart extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   cart_id: number;
 
-  @Column({ type: 'integer' })
-  count: number;
+  @Column({ type: 'integer', default: 0 })
+  count?: number;
 
-  @Column({ type: 'integer' })
-  price: number;
+  @Column({ type: 'integer', default: 0 })
+  price?: number;
 
   @OneToOne(() => Member)
   @JoinColumn([

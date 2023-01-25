@@ -1,10 +1,10 @@
+import { SignUpInfo, ISignUpInfo } from './types/signup.type';
 import { JwtRefreshAuthGuard } from './../auth/jwt/guards/jwt-refresh.guard';
 import { KakaoAuthGuard } from '../auth/jwt/guards/kakao.guard';
 import { JwtAuthGuard } from '../auth/jwt/guards/jwt.guard';
 import { LoginRequestDto } from './dto/request/login-request.dto';
 import { AuthService } from './../auth/auth.service';
 import { UndefinedtoNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
-import { SignupLocalRequestDto } from './dto/request/signup-local-request.dto';
 import { MembersService } from './members.service';
 import { Controller, Post, Body, UseInterceptors, Get, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -29,18 +29,17 @@ export class MembersController {
   }
 
   @ApiResponse({
-    type: SignupLocalRequestDto,
     status: 200,
     description: '로컬 회원가입',
   })
   @ApiOperation({ summary: '로컬 회원가입' })
   @Post('/signup')
-  signUp(@Body() signupDto: SignupLocalRequestDto): Promise<number> {
-    return this.membersService.signUp(signupDto);
+  signUp(@Body() signupDto: ISignUpInfo): Promise<number> {
+    const payload = SignUpInfo.Request(signupDto);
+    return this.membersService.signUp(payload);
   }
 
   @ApiResponse({
-    type: LoginRequestDto,
     status: 200,
     description: '로그인',
   })

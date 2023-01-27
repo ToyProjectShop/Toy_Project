@@ -53,6 +53,7 @@ export class MembersController {
     status: 200,
     description: 'refreshToken success',
   })
+  @ApiOperation({ summary: 'refreshToken 재발급 API' })
   @UseGuards(JwtRefreshAuthGuard)
   @Get('/refresh')
   refresh(@CurrentUser() user) {

@@ -8,7 +8,7 @@ import { UndefinedtoNullInterceptor } from './../common/interceptors/undefinedTo
 import { MembersService } from './members.service';
 import { Controller, Post, Body, UseInterceptors, Get, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from 'src/common/decorators/user.decorator';
+import { CurrentUser } from './../common/decorators/user.decorator';
 
 @ApiTags('MEMBERS')
 @UseInterceptors(UndefinedtoNullInterceptor)
@@ -53,6 +53,7 @@ export class MembersController {
     status: 200,
     description: 'refreshToken success',
   })
+  @ApiOperation({ summary: 'refreshToken 재발급 API' })
   @UseGuards(JwtRefreshAuthGuard)
   @Get('/refresh')
   refresh(@CurrentUser() user) {

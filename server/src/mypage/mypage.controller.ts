@@ -4,12 +4,12 @@ import { EditPasswordDto } from './dto/edit-password-request.dto';
 import { Member } from './../members/members.entity';
 import { EditUsernameDto } from './dto/edit-username-request.dto';
 import { JwtAuthGuard } from '../auth/jwt/guards/jwt.guard';
-import { CurrentUser } from 'src/common/decorators/user.decorator';
+import { CurrentUser } from './../common/decorators/user.decorator';
 import { MypageService } from './mypage.service';
 import { UndefinedtoNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { Controller, Patch, UseInterceptors, UseGuards, Body, Post, Get } from '@nestjs/common';
-import { Order } from 'src/orders/orders.entity';
+import { Order } from './../orders/orders.entity';
 
 @ApiTags('MyPage')
 @UseInterceptors(UndefinedtoNullInterceptor)

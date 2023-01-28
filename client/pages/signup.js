@@ -42,6 +42,7 @@ const Signup = () => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
+    console.log(email, password, username, city, zipcode, street);
   }, [password, passwordCheck]);
   return (
     <AppLayout>

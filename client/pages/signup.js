@@ -1,8 +1,26 @@
 import { Button, Form, Input } from 'antd';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import AppLayout from '../components/AppLayout';
+import { SIGN_UP_REQUEST } from '../reducers/user';
+import Router from 'next/router';
 
 const Signup = () => {
+  const dispatch = useDispatch();
+  const { signUpDone, signUpError } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (signUpDone) {
+      Router.push('/');
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
+
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [city, setCity] = useState('');
@@ -39,11 +57,21 @@ const Signup = () => {
   );
 
   const onSubmit = useCallback(() => {
+    let check = /^[0-9]+$/;
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
+
+    if (!check.test(zipcode)) {
+      alert('zipcode는 숫자로 작성해주세요.');
+      return;
+    }
     console.log(email, password, username, city, zipcode, street);
-  }, [password, passwordCheck]);
+    dispatch({
+      type: SIGN_UP_REQUEST,
+      data: { email, password, username, city, zipcode, street },
+    });
+  }, [email, username, city, zipcode, street, password, passwordCheck]);
   return (
     <AppLayout>
       <Form onFinish={onSubmit} style={{ width: '50%' }}>

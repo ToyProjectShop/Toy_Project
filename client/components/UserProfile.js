@@ -7,7 +7,7 @@ const UserProfile = ({ setIsLoggedIn }) => {
   }, []);
 
   return (
-    <Card actions={[<div>회원정보 수정</div>, <div>배송조회</div>]}>
+    <Card actions={[<div>회원정보 수정</div>]}>
       <Card.Meta
         avatar={<Avatar>AA</Avatar>}
         title="test"

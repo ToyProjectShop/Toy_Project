@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form, Input } from 'antd';
 import Link from 'next/link';
@@ -6,10 +6,16 @@ import { loginRequestAction } from '../reducers/user';
 
 const LoginForm = () => {
   const dispatch = useDispatch();
-  const { LogInLoading } = useSelector((state) => state.user);
+  const { LogInLoading, logInError } = useSelector((state) => state.user);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
 
   const onChangeEmail = useCallback((e) => {
     setEmail(e.target.value);

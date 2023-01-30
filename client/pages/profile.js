@@ -4,9 +4,26 @@ import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
 import { END } from 'redux-saga';
 import cookie from 'cookie';
+import { useSelector } from 'react-redux';
+import Link from 'next/link';
+import { Button } from 'antd';
+import NameEditForm from '../components/NameEditForm';
 
 const Profile = () => {
-  return <AppLayout>profile page</AppLayout>;
+  const { me, logoutLoading } = useSelector((state) => state.user);
+  return (
+    <AppLayout>
+      <div>
+        <div>
+          <p>이메일 : {me.email}</p>
+        </div>
+        <div>
+          <p>이름 : {me.username}</p>
+        </div>
+        <NameEditForm />
+      </div>
+    </AppLayout>
+  );
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(

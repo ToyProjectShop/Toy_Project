@@ -17,7 +17,7 @@ const UserProfile = () => {
     if (!(me && me.member_id)) {
       Router.push('/');
     }
-  }, [me && me.id]);
+  }, [me && me.member_id]);
   // if (!me) {
   //   return null;
   // }

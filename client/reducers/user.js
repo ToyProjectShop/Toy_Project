@@ -1,6 +1,9 @@
 import { produce } from 'immer';
 
 export const initialState = {
+  nameEditLoading: false,
+  nameEditDone: false,
+  nameEditError: null,
   loadMyInfoLoading: false,
   loadMyInfoDone: false,
   loadMyInfoError: null,
@@ -19,6 +22,10 @@ export const initialState = {
   signUpData: {},
   loginData: {},
 };
+
+export const NAME_EDIT_REQUEST = 'NAME_EDIT_REQUEST';
+export const NAME_EDIT_SUCCESS = 'NAME_EDIT_SUCCESS';
+export const NAME_EDIT_FAILURE = 'NAME_EDIT_FAILURE';
 
 export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
 export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
@@ -52,6 +59,20 @@ export const logoutRequestAction = () => {
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case NAME_EDIT_REQUEST:
+        draft.nameEditLoading = true;
+        draft.nameEditDone = false;
+        draft.nameEditError = null;
+        break;
+      case NAME_EDIT_SUCCESS:
+        draft.nameEditLoading = false;
+        draft.me = action.data;
+        draft.nameEditDone = true;
+        break;
+      case NAME_EDIT_FAILURE:
+        draft.nameEditLoading = false;
+        draft.nameEditError = action.data;
+        break;
       case LOAD_MY_INFO_REQUEST:
         draft.loadMyInfoLoading = true;
         draft.loadMyInfoDone = false;

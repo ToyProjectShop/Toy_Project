@@ -11,6 +11,9 @@ import axios from 'axios';
 import cookie from 'react-cookies';
 
 import {
+  NAME_EDIT_REQUEST,
+  NAME_EDIT_SUCCESS,
+  NAME_EDIT_FAILURE,
   LOG_IN_SUCCESS,
   LOG_IN_REQUEST,
   LOG_IN_FAILURE,
@@ -24,6 +27,34 @@ import {
   LOAD_MY_INFO_SUCCESS,
   LOAD_MY_INFO_FAILURE,
 } from '../reducers/user';
+
+function nameEditAPI(data) {
+  const accessToken = cookie.load('accessToken');
+  console.log('result', data);
+
+  return axios.patch('/mypage/username', data, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+function* nameEdit(action) {
+  try {
+    const result = yield call(nameEditAPI, action.data);
+    console.log(result);
+    yield put({
+      type: NAME_EDIT_SUCCESS,
+      data: result.data,
+    });
+    alert('이름 변경 성공');
+  } catch (err) {
+    yield put({
+      type: NAME_EDIT_FAILURE,
+      data: err.response.data.message,
+    });
+  }
+}
 
 function signUpAPI(data) {
   return axios.post('/auth/signup', data);
@@ -116,6 +147,10 @@ function* logOut(action) {
   }
 }
 
+function* watchNameEdit() {
+  yield takeLatest(NAME_EDIT_REQUEST, nameEdit);
+}
+
 function* watchSignUp() {
   yield takeLatest(SIGN_UP_REQUEST, signUp);
 }
@@ -137,5 +172,6 @@ export default function* userSaga() {
     fork(watchLogOut),
     fork(watchSignUp),
     fork(watchLoadMyInfo),
+    fork(watchNameEdit),
   ]);
 }

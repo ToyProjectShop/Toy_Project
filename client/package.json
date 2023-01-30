@@ -5,13 +5,16 @@
   "main": "index.js",
   "scripts": {
     "dev": "next",
+
     "build":"NODE_ENV=production next build",
     "start": "NODE_ENV=production next start -p 3060"
+
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
+    "@next/bundle-analyzer": "^13.1.6",
     "antd": "^5.1.2",
     "axios": "^1.2.5",
     "cookie": "^0.5.0",

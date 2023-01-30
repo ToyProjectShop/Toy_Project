@@ -20,7 +20,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: Payload) {
+    /**
+     *  const member = await this.membersRepository
+        .createQueryBuilder('m')
+        .leftJoinAndSelect('m.member', 'p')
+        .leftJoinAndSelect('m.member', 'a')
+        .where('m.member = :id', { id: user.member_id })
+        .getOne();
+     */
+
     const member = await this.membersRepository.findOne({
+      relations: ['address'],
       where: {
         member_id: payload.sub,
       },

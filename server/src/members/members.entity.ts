@@ -28,6 +28,7 @@ export class Member extends BaseEntity {
   @Column({ type: 'char', length: 11 })
   phone: number;
 
+  @Exclude()
   @Column({ type: 'varchar', nullable: true })
   refreshToken?: string;
 

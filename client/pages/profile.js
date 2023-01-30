@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AppLayout from '../components/AppLayout';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
 import { END } from 'redux-saga';
 import cookie from 'cookie';
 import { useSelector } from 'react-redux';
-import Link from 'next/link';
-import { Button } from 'antd';
 import NameEditForm from '../components/NameEditForm';
 
 const Profile = () => {
-  const { me, logoutLoading } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
+
   return (
     <AppLayout>
       <div>

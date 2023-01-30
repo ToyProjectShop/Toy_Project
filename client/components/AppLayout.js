@@ -16,11 +16,19 @@ const AppLayout = ({ children }) => {
             <a>Home</a>
           </Link>
         </Menu.Item>
-        <Menu.Item>
-          <Link href="/profile">
-            <a>마이페이지</a>
-          </Link>
-        </Menu.Item>
+        {me ? (
+          <Menu.Item>
+            <Link href="/profile">
+              <a>마이페이지</a>
+            </Link>
+          </Menu.Item>
+        ) : (
+          <Menu.Item disabled={true}>
+            <Link href="/profile">
+              <a>마이페이지</a>
+            </Link>
+          </Menu.Item>
+        )}
         <Menu.Item>
           <Link href="/profile">
             <a>장바구니</a>

@@ -18,7 +18,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.use(cookieParser());
-  // Entity @Exclude() 적용 비밀번호 노출 X
+
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.enableCors({
     origin: true,

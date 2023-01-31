@@ -9,6 +9,7 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const port = process.env.PORT;
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -18,14 +19,14 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.use(cookieParser());
-  // Entity @Exclude() 적용 비밀번호 노출 X
+
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.enableCors({
     origin: true,
     credentials: true,
   });
 
-  await app.listen(4000);
+  await app.listen(port);
 }
 
 bootstrap();

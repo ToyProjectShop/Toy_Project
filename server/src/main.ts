@@ -9,6 +9,7 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const port = process.env.PORT;
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -25,7 +26,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  await app.listen(4000);
+  await app.listen(port);
 }
 
 bootstrap();

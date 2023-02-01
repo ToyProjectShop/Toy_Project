@@ -14,10 +14,10 @@ const Profile = () => {
     <AppLayout>
       <div>
         <div>
-          <p>이메일 : {me.email}</p>
+          <p>이메일 : {me?.email}</p>
         </div>
         <div>
-          <p>이름 : {me.username}</p>
+          <p>이름 : {me?.username}</p>
         </div>
         <NameEditForm />
       </div>

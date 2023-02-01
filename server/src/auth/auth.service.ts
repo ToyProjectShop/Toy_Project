@@ -34,10 +34,31 @@ export class AuthService {
     }
 
     const payload = { email: email, sub: member.member_id };
-    console.log(payload);
+
+    const jwtAccessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1h' });
+    const jwtRefreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '1d' });
+
+    const currentHashedRefreshToken = await bcrypt.hash(jwtRefreshToken, 10);
+    await this.membersRepository.update(member.member_id, { refreshToken: currentHashedRefreshToken });
 
     return {
-      token: this.jwtService.sign(payload, { secret: process.env.JWT_KEY }),
+      jwtAccessToken,
+      jwtRefreshToken,
+    };
+  }
+
+  async jwtRefreshTokenLogIn(user: Member) {
+    const payload = { email: user.email, sub: user.member_id };
+
+    const jwtAccessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1h' });
+    const jwtRefreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '1d' });
+
+    const currentHashedRefreshToken = await bcrypt.hash(jwtRefreshToken, 10);
+    await this.membersRepository.update(user.member_id, { refreshToken: currentHashedRefreshToken });
+
+    return {
+      jwtAccessToken,
+      jwtRefreshToken,
     };
   }
 
@@ -58,7 +79,7 @@ export class AuthService {
     const payload = { email: email, sub: member.member_id };
 
     return {
-      token: this.jwtService.sign(payload, { secret: process.env.JWT_KEY }),
+      token: this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET }),
     };
   }
 }

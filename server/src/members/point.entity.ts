@@ -7,8 +7,8 @@ export class Point extends BaseEntity {
   @PrimaryGeneratedColumn()
   point_id: number;
 
-  @Column({ type: 'integer' })
-  point: number;
+  @Column({ type: 'integer', default: 5000 })
+  point?: number;
 
   @OneToOne(() => Member)
   @JoinColumn([

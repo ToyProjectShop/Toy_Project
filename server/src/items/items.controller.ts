@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { userInfo } from 'os';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { JwtAuthGuard } from 'src/auth/jwt/guards/jwt.guard';
 import { Category } from 'src/category/category.entity';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { UndefinedtoNullInterceptor } from 'src/common/interceptors/undefinedToNull.interceptor';
@@ -27,7 +27,7 @@ export class ItemsController {
     description: '상품상세 조회 성공',
   })
   @Get('/:item_id')
-  getItem(@CurrentUser() user: Member, @Param('item_id') item_id: string) {
+  getItem(@CurrentUser() user: Member, @Param('item_id') item_id: number) {
     const result = this.itemService.getItem(user, item_id);
     return result;
   }

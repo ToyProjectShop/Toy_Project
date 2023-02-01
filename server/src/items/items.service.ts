@@ -50,8 +50,12 @@ export class ItemsService {
   }
   //상품수정
   async updateItem(user, item_id, updateItemDto): Promise<Item> {
+    console.log('item_id: ', typeof item_id);
+    const itemid = parseInt(item_id);
     try {
       const { item_name, price, image, description, stockquantity, category_id } = updateItemDto;
+      console.log('updateItemDto: ', updateItemDto);
+
       const item = new Item();
       (item.item_name = item_name),
         (item.price = price),
@@ -60,8 +64,10 @@ export class ItemsService {
         (item.stockquantity = stockquantity);
       item.category = category_id;
 
-      const result = await this.itemRepository.findOne({ where: { item_id } });
-      await this.itemRepository.update({ item_id }, { ...item });
+      const result = await this.itemRepository.findOne({ where: { item_id: itemid } });
+      console.log('resul: ', result.item_id);
+      const data = await this.itemRepository.update({ item_id: itemid }, item);
+
       return result;
     } catch {
       throw new HttpException('3102', 400);

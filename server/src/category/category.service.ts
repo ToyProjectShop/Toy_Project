@@ -12,6 +12,7 @@ export class CategoryService {
 
   //카테고리 생성
   async create(user, category_name): Promise<Category> {
+    console.log('user: ', user);
     try {
       const result = await this.categoryRepository.save(category_name);
       return result;

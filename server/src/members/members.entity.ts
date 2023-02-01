@@ -2,7 +2,7 @@ import { Address } from './address.entity';
 import { BaseEntity } from './../common/baseEntity/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany, Binary } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Order } from 'src/orders/orders.entity';
+import { Order } from './../orders/orders.entity';
 
 @Entity()
 export class Member extends BaseEntity {
@@ -27,6 +27,10 @@ export class Member extends BaseEntity {
 
   @Column({ type: 'char', length: 11 })
   phone: number;
+
+  @Exclude()
+  @Column({ type: 'varchar', nullable: true })
+  refreshToken?: string;
 
   @OneToMany(() => Address, (address) => address.member, { cascade: true })
   address: Address[];

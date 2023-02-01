@@ -1,6 +1,6 @@
+import { Cart } from './../carts/cart.entity';
 import { Point } from './point.entity';
 import { Address } from './address.entity';
-import { SignupLocalRequestDto } from './dto/request/signup-local-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, ConflictException } from '@nestjs/common';
 import { Member } from './members.entity';
@@ -16,12 +16,12 @@ export class MembersService {
     private readonly addressRepository: Repository<Address>,
     @InjectRepository(Point)
     private readonly pointRepository: Repository<Point>,
+    @InjectRepository(Cart)
+    private readonly cartRepository: Repository<Cart>,
   ) {}
 
-  async signUp(signupDto: SignupLocalRequestDto): Promise<number> {
-    const { email, username, password, phone, city, street, zipcode } = signupDto;
-    const transformPhone = parseInt(phone);
-    const transformZipcode = parseInt(zipcode);
+  async signUp(signupDto): Promise<number> {
+    const { email, username, password, phone, city, street, zipcode, provider, snsId } = signupDto;
 
     // 회원가입
     const isUser = await this.membersRepository.findOne({
@@ -34,8 +34,10 @@ export class MembersService {
     const saveUser = this.membersRepository.create({
       email,
       username,
-      phone: transformPhone,
+      phone,
       password: hashedPassword,
+      provider,
+      snsId,
     });
 
     const member = await this.membersRepository.save(saveUser);
@@ -43,12 +45,15 @@ export class MembersService {
     await this.addressRepository.save({
       city,
       street,
-      zipcode: transformZipcode,
+      zipcode,
       member,
     });
 
     await this.pointRepository.save({
-      point: 5000,
+      member,
+    });
+
+    await this.cartRepository.save({
       member,
     });
     return member.member_id;

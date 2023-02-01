@@ -1,10 +1,21 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form, Input } from 'antd';
 import Link from 'next/link';
+import { loginRequestAction } from '../reducers/user';
 
-const LoginForm = ({ setIsLoggedIn }) => {
+const LoginForm = () => {
+  const dispatch = useDispatch();
+  const { LogInLoading, logInError } = useSelector((state) => state.user);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
 
   const onChangeEmail = useCallback((e) => {
     setEmail(e.target.value);
@@ -16,7 +27,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
 
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
-    setIsLoggedIn(true);
+    dispatch(loginRequestAction({ email, password }));
   }, [email, password]);
 
   return (
@@ -38,7 +49,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
         />
       </div>
       <div style={{ marginTop: 10 }}>
-        <Button type="primary" htmlType="submit" loading={false}>
+        <Button type="primary" htmlType="submit" loading={LogInLoading}>
           로그인
         </Button>
         <Link href="/signup">

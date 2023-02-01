@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Param, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { JwtAuthGuard } from 'src/auth/jwt/guards/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { UndefinedtoNullInterceptor } from 'src/common/interceptors/undefinedToNull.interceptor';
 import { Category } from './category.entity';
@@ -24,6 +24,7 @@ export class CategoryController {
   @Post()
   async create(@CurrentUser() user, @Body() category_name: string): Promise<Category> {
     const result = await this.categoryService.create(user, category_name);
+    console.log('category_name: ', category_name);
     return result;
   }
   //카테고리 수정

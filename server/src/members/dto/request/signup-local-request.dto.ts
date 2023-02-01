@@ -27,7 +27,7 @@ export class SignupLocalRequestDto {
     example: '01012345678',
     description: 'phone',
   })
-  readonly phone: string;
+  readonly phone: string | number;
 
   @ApiProperty({
     example: '고양시',
@@ -47,5 +47,5 @@ export class SignupLocalRequestDto {
     example: '12345',
     description: 'zipcode',
   })
-  readonly zipcode: string;
+  readonly zipcode: string | number;
 }

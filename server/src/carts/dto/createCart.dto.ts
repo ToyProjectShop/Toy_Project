@@ -14,7 +14,7 @@ export class CreateCartDto {
   @ApiProperty({
     example: '10000',
     description: '판매 가격',
-    required: true,
+    required: false,
   })
   @IsNotEmpty()
   @IsNumber()

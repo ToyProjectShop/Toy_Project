@@ -31,4 +31,7 @@ export class Cart_Item extends BaseEntity {
     },
   ])
   item: Item;
+
+  @Column({ type: 'integer' })
+  itemCount: number;
 }

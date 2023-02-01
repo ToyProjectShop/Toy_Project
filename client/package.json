@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start -p 4000"
+    "start": "next start -p 80"
   },
   "author": "",
   "license": "ISC",

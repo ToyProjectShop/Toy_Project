@@ -69,7 +69,7 @@ BackEnd : [백수빈](https://www.notion.so/4c34830f41f444daa42f786877d70d14), [
 
 ## 📌 API 명세서
 
-[API 명세서](https://github.com/ToyProjectShop/Toy_Project/files/10675171/API.3de90ebb0d9143b5a96fc5bc7f042f09.md)
+[API 명세서](https://www.notion.so/3de90ebb0d9143b5a96fc5bc7f042f09?v=1e898729601b48ec966287a8ed732bd0)
 
 ---
 

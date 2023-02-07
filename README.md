@@ -34,30 +34,11 @@ BackEnd : [백수빈](https://www.notion.so/4c34830f41f444daa42f786877d70d14), [
 
 - 직접 상품등록을 하고, 이미지를 첨부하는 CRUD를 구현하기 위해 크롤링은 하지 않는다
 
-
 ---
 
 ## ERD
 
 ![drawSQL-shoppingmall-export-2023-02-07](https://user-images.githubusercontent.com/90247663/217237065-ebf719a1-ab63-4f7b-a349-04ef0ad03248.png)
-
-
----
-
-## 에러코드 문서화
-
-<img width="819" alt="스크린샷 2023-02-07 오후 9 05 21" src="https://user-images.githubusercontent.com/90247663/217240708-55a9e66f-e6c5-4722-8993-6f1c0ee4fb1c.png">
-
-<img width="864" alt="스크린샷 2023-02-07 오후 9 05 43" src="https://user-images.githubusercontent.com/90247663/217240791-c5d2b293-1d7c-46c8-a370-07311bb822ae.png">
-
-<img width="862" alt="스크린샷 2023-02-07 오후 9 05 58" src="https://user-images.githubusercontent.com/90247663/217240854-168aa73c-7dd8-40bf-a9b1-b8a213f67747.png">
-
-<img width="859" alt="스크린샷 2023-02-07 오후 9 06 19" src="https://user-images.githubusercontent.com/90247663/217240874-48c7f1cb-d571-4cb9-a64d-e7ac990ec8fc.png">
-
-<img width="787" alt="스크린샷 2023-02-07 오후 9 06 40" src="https://user-images.githubusercontent.com/90247663/217240911-9185328f-95d9-4fc3-83ea-c41a1962043f.png">
-
-<img width="805" alt="스크린샷 2023-02-07 오후 9 06 54" src="https://user-images.githubusercontent.com/90247663/217240917-6deea36a-ddf7-4019-941a-091aff7092f5.png">
-
 
 ---
 

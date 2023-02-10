@@ -23,7 +23,10 @@ export class Item extends BaseEntity {
   @Column({ type: 'integer' })
   stockquantity: number;
 
-  @ManyToOne(() => Category, (category) => category.item)
+  @ManyToOne(() => Category, (category) => category.item, {
+    onDelete:'CASCADE',
+    onUpdate:'CASCADE'
+  })
   @JoinColumn([
     {
       name: 'category_id',
@@ -32,9 +35,9 @@ export class Item extends BaseEntity {
   ])
   category: Category;
 
-  @OneToMany(() => Order_Item, (order_item) => order_item.item)
+  @OneToMany(() => Order_Item, (order_item) => order_item.item,{cascade:true})
   order_item: Order_Item[];
 
-  @OneToMany(() => Cart_Item, (cart_item) => cart_item.item)
+  @OneToMany(() => Cart_Item, (cart_item) => cart_item.item,{cascade:true})
   cart_item: Cart_Item[];
 }

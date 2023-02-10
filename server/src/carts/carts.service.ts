@@ -55,6 +55,7 @@ export class CartsService {
         .getRepository(Cart)
         .findOne({ where: { cart_id: findmemberid.cart_id } });
       const finditemid = await queryRunner.manager.getRepository(Item).findOne({ where: { item_id: item_id.item_id } });
+      console.log('finditemid: ', finditemid.item_id);
       const checkDup = await this.cart_ItemRepository
         .createQueryBuilder('dup')
         .leftJoinAndSelect('dup.cart', 'cart')
@@ -177,6 +178,7 @@ export class CartsService {
    * @param user
    * @returns
    */
+
   async deleteOne(user, item_id: number): Promise<Cart_Item[]> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();

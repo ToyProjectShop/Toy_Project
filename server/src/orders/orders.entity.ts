@@ -3,11 +3,11 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn, ManyToOn
 import { Member } from '../members/members.entity';
 import { Order_Item } from './order_item.entity';
 
-export enum IsOrderStatus {
-  order_complete = '주문완료',
-  order_cancel = '주문취소',
-  default = '주문대기',
-}
+// export enum IsOrderStatus {
+//   order_complete = '주문완료',
+//   order_cancel = '주문취소',
+//   default = '주문대기',
+// }
 
 @Entity({ name: 'orders' })
 export class Order extends BaseEntity {
@@ -21,11 +21,11 @@ export class Order extends BaseEntity {
   price: number;
 
   @Column({
-    type: 'enum',
-    enum: IsOrderStatus,
-    default: IsOrderStatus.default,
+    type: 'varchar',
+    length: '11',
+    default: 'complete',
   })
-  status: IsOrderStatus;
+  status: string;
 
   @Column({ type: 'varchar', length: '11' })
   city: string;

@@ -1,5 +1,8 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cart } from 'src/carts/cart.entity';
+import { CartsController } from 'src/carts/carts.controller';
+import { CartsService } from 'src/carts/carts.service';
 import { Cart_Item } from 'src/carts/cart_item.entity';
 import { Item } from 'src/items/items.entity';
 import { Point } from 'src/members/point.entity';
@@ -21,7 +24,10 @@ export class OrdersService {
     private readonly pointRepository: Repository<Point>,
     @InjectRepository(Cart_Item)
     private readonly cartItemRepository: Repository<Cart_Item>,
+    @InjectRepository(Cart)
+    private readonly cartRepository: Repository<Cart>,
     private readonly dataSource: DataSource,
+    private readonly cartsService: CartsService, // private readonly cartsController: CartsController,
   ) {}
 
   //1) 주문 저장하기
@@ -46,22 +52,77 @@ export class OrdersService {
         console.log('checkPoint: ', checkPoint);
         throw new HttpException('2101', 400);
       }
+      const point = checkPoint.point - order.price;
+      console.log('point: ', point);
+
+      const isupdatedPoint = await queryRunner.manager.getRepository(Point).create({ point: point });
+      const isupdated = await queryRunner.manager.getRepository(Point).update(user.member_id, isupdatedPoint);
       //회원의 배송지, 주문 정보를 order table에 저장 시킨다
-      const create = await queryRunner.manager.getRepository(Order).create(order);
-      const orderSave = await queryRunner.manager.getRepository(Order).save({ ...order });
-      console.log('orderSave: ', orderSave);
+      const data = new Order();
+      data.count = order.count;
+      data.city = order.city;
+      data.price = order.price;
+      data.phone = order.phone;
+      data.status = order.status;
+      data.street = order.street;
+      data.member = order.member_id;
+      data.zipcode = order.zipcode;
+      const create = await queryRunner.manager.getRepository(Order).create(data);
+      console.log('create: ', create);
+
+      const orderSave = await queryRunner.manager.getRepository(Order).save(create);
 
       // 저장된 주문 정보에서 order_id와 item_id를 조회해서 order_item 테이블에 저장시킨다
-      const findorderid = await this.orderRepository.findOne({ where: { order_id: orderSave.order_id } });
-      const orderitemSave = await queryRunner.manager.getRepository(Order_Item).create(orderSave.order_id);
-      await queryRunner.manager.getRepository(Order_Item).create(orderSave.item_id);
-      await queryRunner.manager.getRepository(Order_Item).save(orderitemSave);
+      const finditemid = order.item_id;
+      const orderitemSave = await queryRunner.manager.getRepository(Order_Item).save({
+        order: orderSave,
+        item: finditemid,
+      });
+      console.log('orderitemSave: ', orderitemSave);
+      // //장바구니에서 주문한 상품을 삭제한다
+      const findCartItem = await this.cartItemRepository
 
-      //장바구니에서 주문한 상품을 삭제한다
+        .createQueryBuilder('cartitem')
+        .leftJoinAndSelect('cartitem.cart', 'cart')
+        .leftJoinAndSelect('cartitem.item', 'item')
+        .where('item.item_id = :item_id', { item_id: finditemid })
+        .getMany();
+      console.log('findCartItem: ', findCartItem);
+      if (findCartItem) {
+        const findcart = findCartItem.map((x) => parseInt(x.cart.cart_id.toString(), 10) === user.member_id);
+        const cartid = findCartItem.map((x) => x.cart.cart_id);
+        const countupdate = findCartItem.map((x) => x.cart.count - x.itemCount);
+        const priceupdate = findCartItem.map((x) => x.cart.price - x.itemCount * x.item.price);
+        const findcartitemid = findCartItem.map((x) => x.cart_item_id);
+        //cart 테이블 수정
+        for (let i = 0; i < findcart.length; i++) {
+          const cart_id = cartid[i];
+          console.log('cart_id: ', cart_id);
+          const cart = await queryRunner.manager.getRepository(Cart).findOne({ where: { cart_id } });
+          console.log('cart: ', cart);
+          const isupdated = await queryRunner.manager
+
+            .getRepository(Cart)
+            .update(cart_id, { count: countupdate[i], price: priceupdate[i] });
+          console.log('updated: ', isupdated);
+        }
+        //cart_item 테이블에서 itemCount 0 변경후 softDelete
+        for (let i = 0; i < findcartitemid.length; i++) {
+          const cart_item_id = parseInt(findcartitemid[i].toString(), 10);
+          console.log('cart_item_id: ', cart_item_id);
+          await queryRunner.manager.getRepository(Cart_Item).findOne({ where: { cart_item_id } });
+          const zero = 0;
+          const updatecartItem = await queryRunner.manager
+            .getRepository(Cart_Item)
+            .update(cart_item_id, { itemCount: zero });
+          const deleted = await queryRunner.manager.getRepository(Cart_Item).softDelete(cart_item_id);
+          console.log('updatecartItem: ', updatecartItem);
+        }
+      }
 
       await queryRunner.commitTransaction();
 
-      return orderSave;
+      return order;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;

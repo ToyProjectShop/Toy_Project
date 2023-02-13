@@ -22,7 +22,11 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard)
   @Post('/')
   async create(@CurrentUser() user: Member, @Body() order: CreateOrdersDto): Promise<Order> {
+    console.log('user: ', user);
+    order.member_id = user.member_id;
+    console.log('order.member_id: ', order.member_id);
     const result = await this.ordersService.create(user, order);
+    console.log('order: ', order);
     return result;
   }
   @ApiResponse({

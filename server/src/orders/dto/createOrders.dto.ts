@@ -32,4 +32,8 @@ export class CreateOrdersDto {
   @IsNotEmpty()
   @IsNumber()
   readonly item_id: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  member_id: number;
 }

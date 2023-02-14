@@ -3,8 +3,6 @@
 
 - 설명 : 개발에 몰입할 수 있게 최상의 개발환경을 만들기 위해 필요한 물건들을 모아서 제공한다. 개발 필수 템을 모아 파는 뚜렷한 특성을 갖고 있는 쇼핑몰이 아직 없다
 
-- 배포 주소 : 
-
 - 노션 링크 : https://www.notion.so/490d998ad4bf4683a48fc58a51f92fa8
 ---
 
@@ -57,6 +55,4 @@ BackEnd : [백수빈](https://www.notion.so/4c34830f41f444daa42f786877d70d14), [
 [API 명세서](https://www.notion.so/3de90ebb0d9143b5a96fc5bc7f042f09?v=1e898729601b48ec966287a8ed732bd0)
 
 ---
-
-## temp
 

@@ -28,10 +28,6 @@ export class Member extends BaseEntity {
   @Column({ type: 'char', length: 11 })
   phone: number;
 
-  @Exclude()
-  @Column({ type: 'varchar', nullable: true })
-  refreshToken?: string;
-
   @OneToMany(() => Address, (address) => address.member, { cascade: true })
   address: Address[];
 

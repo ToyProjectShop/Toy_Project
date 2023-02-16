@@ -58,7 +58,9 @@ export class AuthService {
     const jwtRefreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '1d' });
 
     const currentHashedRefreshToken = await bcrypt.hash(jwtRefreshToken, 10);
-    await this.membersRepository.update(user.member_id, { refreshToken: currentHashedRefreshToken });
+
+    const memberId = user.member_id.toString();
+    await this.cacheManager.set(memberId, currentHashedRefreshToken);
 
     return {
       jwtAccessToken,

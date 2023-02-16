@@ -49,6 +49,8 @@ export class MembersService {
       await queryRunner.manager.getRepository(Cart).save({
         member,
       });
+
+      await queryRunner.commitTransaction();
       return member.member_id;
     } catch (err) {
       console.error(err);

@@ -1,10 +1,11 @@
 import { LoginRequestDto } from './../members/dto/request/login-request.dto';
 import { Member } from './../members/members.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, Inject, CACHE_MANAGER } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
     @InjectRepository(Member)
     private readonly membersRepository: Repository<Member>,
     private readonly jwtService: JwtService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async jwtLogIn(loginDto: LoginRequestDto) {
@@ -39,7 +41,9 @@ export class AuthService {
     const jwtRefreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '1d' });
 
     const currentHashedRefreshToken = await bcrypt.hash(jwtRefreshToken, 10);
-    await this.membersRepository.update(member.member_id, { refreshToken: currentHashedRefreshToken });
+
+    const memberId = member.member_id.toString();
+    await this.cacheManager.set(memberId, currentHashedRefreshToken);
 
     return {
       jwtAccessToken,
@@ -54,7 +58,9 @@ export class AuthService {
     const jwtRefreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '1d' });
 
     const currentHashedRefreshToken = await bcrypt.hash(jwtRefreshToken, 10);
-    await this.membersRepository.update(user.member_id, { refreshToken: currentHashedRefreshToken });
+
+    const memberId = user.member_id.toString();
+    await this.cacheManager.set(memberId, currentHashedRefreshToken);
 
     return {
       jwtAccessToken,

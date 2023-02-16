@@ -3,16 +3,18 @@ import { Member } from '../../../members/members.entity';
 import { Payload } from '../jwt.payload';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh-token') {
   constructor(
     @InjectRepository(Member)
     private readonly membersRepository: Repository<Member>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -30,8 +32,8 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh-toke
         member_id: payload.sub,
       },
     });
-
-    const isRefreshTokenMatching = await bcrypt.compare(refreshToken, member.refreshToken);
+    const redisMemberRTK: any = await this.cacheManager.get(payload.sub.toString());
+    const isRefreshTokenMatching = await bcrypt.compare(refreshToken, redisMemberRTK);
 
     if (isRefreshTokenMatching) {
       return member; // request.user

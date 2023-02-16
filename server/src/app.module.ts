@@ -1,5 +1,5 @@
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { CacheModule, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,6 +14,7 @@ import { MypageModule } from './mypage/mypage.module';
 
 @Module({
   imports: [
+    CacheModule.register(),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',

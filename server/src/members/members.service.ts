@@ -24,7 +24,7 @@ export class MembersService {
         throw new ConflictException('이미 존재하는 사용자입니다.');
       }
       const hashedPassword = await bcrypt.hash(password, 6);
-      const saveUser = queryRunner.manager.getRepository(Member).create({
+      const saveUser = await queryRunner.manager.getRepository(Member).create({
         email,
         username,
         phone,

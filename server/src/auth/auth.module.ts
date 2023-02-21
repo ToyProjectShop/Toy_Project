@@ -1,3 +1,4 @@
+import { AdminAuthGuard } from './jwt/guards/admin.guard';
 import { JwtRefreshStrategy } from './jwt/strategies/jwt.refresh.strategy';
 import { KakaoStrategy } from './jwt/strategies/kakao.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -16,7 +17,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_KEY,
     }),
   ],
-  providers: [AuthService, JwtStrategy, KakaoStrategy, JwtRefreshStrategy],
+  providers: [AuthService, JwtStrategy, KakaoStrategy, JwtRefreshStrategy, AdminAuthGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

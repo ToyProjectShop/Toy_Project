@@ -1,3 +1,4 @@
+import { AdminAuthGuard } from './../auth/jwt/guards/admin.guard';
 import { SignUpInfo, ISignUpInfo } from './types/signup.type';
 import { JwtRefreshAuthGuard } from './../auth/jwt/guards/jwt-refresh.guard';
 import { KakaoAuthGuard } from '../auth/jwt/guards/kakao.guard';
@@ -25,6 +26,18 @@ export class MembersController {
   @UseGuards(JwtAuthGuard)
   @Get()
   getCurrentMember(@CurrentUser() user) {
+    return user;
+  }
+
+  @ApiResponse({
+    type: CurrentUser,
+    status: 200,
+    description: '어드민 회원정보 조회',
+  })
+  @ApiOperation({ summary: '어민 회원정보' })
+  @UseGuards(AdminAuthGuard)
+  @Get()
+  getAdminMember(@CurrentUser() user) {
     return user;
   }
 

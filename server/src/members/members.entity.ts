@@ -28,6 +28,9 @@ export class Member extends BaseEntity {
   @Column({ type: 'char', length: 11 })
   phone: number;
 
+  @Column({ type: 'boolean' })
+  isAdmin: boolean;
+
   @OneToMany(() => Address, (address) => address.member, { cascade: true })
   address: Address[];
 

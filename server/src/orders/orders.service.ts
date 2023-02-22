@@ -118,6 +118,12 @@ export class OrdersService {
           const deleted = await queryRunner.manager.getRepository(Cart_Item).softDelete(cart_item_id);
           console.log('updatecartItem: ', updatecartItem);
         }
+        //item 재고수량 차감
+        const updatestock = checkStock.stockquantity - order.count;
+        console.log('updatestock: ', updatestock);
+        const isupdatedStock = await queryRunner.manager
+          .getRepository(Item)
+          .update(checkStock.item_id, { stockquantity: updatestock });
       }
 
       await queryRunner.commitTransaction();
@@ -132,9 +138,57 @@ export class OrdersService {
   }
 
   //2) 주문취소 하기
-  async cancel(user, order_id): Promise<Order> {
-    const result = await this.orderRepository.softDelete(order_id);
-    // const result = await this.orderRepository.save({ ...order });
-    return;
+  async cancel(user, order_id, cancel): Promise<Order> {
+    console.log('cancel: ', cancel);
+    console.log('order_item_id: ', order_id);
+    const orderid = parseInt(order_id);
+    const checkorder = await this.orderRepository.findOne({ where: { order_id: orderid } });
+    console.log('checkorder: ', checkorder);
+    if (!checkorder) {
+      throw new HttpException('2102', 400);
+    }
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    try {
+      await queryRunner.startTransaction();
+
+      //삭제할 주문 정보 찾기
+      const checkItem = await this.order_itemRepository
+        .createQueryBuilder('orderitem')
+        .leftJoinAndSelect('orderitem.order', 'order')
+        .leftJoinAndSelect('orderitem.item', 'item')
+        .where('order.order_id = :order_id', { order_id: orderid })
+        .andWhere('item.item_id = :item_id', { item_id: cancel.item_id })
+        .getOne();
+      console.log('checkItem: ', checkItem);
+
+      //주문 정보 삭제하기
+      const deleteOrder = await queryRunner.manager.getRepository(Order).softDelete(checkItem.order.order_id);
+      const deleteOrderItem = await queryRunner.manager.getRepository(Order_Item).softDelete(checkItem.order_item_id);
+
+      //재고 되돌리기
+      const checkStock = await this.itemRepository.findOne({ where: { item_id: checkItem.item.item_id } });
+      const stock = checkStock.stockquantity + cancel.count;
+      const restock = await queryRunner.manager
+        .getRepository(Item)
+        .update(checkStock.item_id, { stockquantity: stock });
+      console.log('restock: ', restock);
+
+      //point 환불하기
+      const checkPoint = await this.pointRepository.findOne({ where: { member: user.member_id } });
+      console.log('checkPoint: ', checkPoint);
+      const point = checkPoint.point + cancel.price;
+      console.log('point: ', point);
+      const refund = await queryRunner.manager.getRepository(Point).update(user.member_id, { point: point });
+      console.log('refund: ', refund);
+
+      await queryRunner.commitTransaction();
+
+      return;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

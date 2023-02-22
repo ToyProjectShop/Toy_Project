@@ -1,9 +1,11 @@
 import { Body, Controller, Headers, Param, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import e from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt/guards/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { UndefinedtoNullInterceptor } from 'src/common/interceptors/undefinedToNull.interceptor';
 import { Member } from 'src/members/members.entity';
+import { CancelOrderDto } from './dto/cancleOrders.dto';
 import { CreateOrdersDto } from './dto/createOrders.dto';
 import { Order } from './orders.entity';
 import { OrdersService } from './orders.service';
@@ -24,9 +26,7 @@ export class OrdersController {
   async create(@CurrentUser() user: Member, @Body() order: CreateOrdersDto): Promise<Order> {
     console.log('user: ', user);
     order.member_id = user.member_id;
-    console.log('order.member_id: ', order.member_id);
     const result = await this.ordersService.create(user, order);
-    console.log('order: ', order);
     return result;
   }
   @ApiResponse({
@@ -36,8 +36,12 @@ export class OrdersController {
   @ApiOperation({ summary: '주문 취소' })
   @UseGuards(JwtAuthGuard)
   @Post('/cancel/:order_id')
-  async cancle(@CurrentUser() user: Member, @Param('order_id') order_id: number): Promise<Order> {
-    const result = await this.ordersService.cancel(user, order_id);
+  async cancle(
+    @CurrentUser() user: Member,
+    @Param('order_id') order_id: number,
+    @Body() cancel: CancelOrderDto,
+  ): Promise<Order> {
+    const result = await this.ordersService.cancel(user, order_id, cancel);
     return result;
   }
 }

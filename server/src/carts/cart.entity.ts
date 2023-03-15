@@ -23,6 +23,6 @@ export class Cart extends BaseEntity {
   ])
   member: Member;
 
-  @OneToMany(() => Cart_Item, (cart_item) => cart_item.item)
+  @OneToMany(() => Cart_Item, (cart_item) => cart_item.item, {cascade:true})
   cart_item: Cart_Item[];
 }

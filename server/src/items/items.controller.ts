@@ -69,7 +69,7 @@ export class ItemsController {
     status: 201,
     description: '상품수정 성공',
   })
-  @Patch('/:item_id')
+  @Put('/:item_id')
   async updateItem(
     @CurrentUser() user: Member,
     @Param('item_id') item_id: number,
@@ -89,7 +89,11 @@ export class ItemsController {
   })
   @Delete('/:item_id')
   async deleteItem(@CurrentUser() user: Member, @Param('item_id') item_id: number) {
-    await this.itemService.deleteItem(user, item_id);
-    return;
+    const result = await this.itemService.deleteItem(user, item_id);
+    if (!result) {
+      return { code: '3002' };
+    } else {
+      return { code: 3103 };
+    }
   }
 }

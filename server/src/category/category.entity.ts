@@ -10,6 +10,6 @@ export class Category extends BaseEntity {
   @Column({ type: 'varchar' })
   category_name: string;
 
-  @OneToMany(() => Item, (item) => item.category)
+  @OneToMany(() => Item, (item) => item.category, {cascade:true})
   item: Item[];
 }

@@ -55,16 +55,20 @@ export class CartsService {
         .getRepository(Cart)
         .findOne({ where: { cart_id: findmemberid.cart_id } });
       const finditemid = await queryRunner.manager.getRepository(Item).findOne({ where: { item_id: item_id.item_id } });
+      console.log('finditemid: ', finditemid.item_id);
       const checkDup = await this.cart_ItemRepository
+
         .createQueryBuilder('dup')
         .leftJoinAndSelect('dup.cart', 'cart')
         .leftJoinAndSelect('dup.item', 'item')
         .where('dup.cart= :id', { id: findcartid.cart_id })
         .getMany();
+      console.log('checkDup: ', checkDup);
 
       //4. 중복된 상품이 있다면 에러 처리하기
-      checkDup.map((x) => {
-        if (x.item.item_id === finditemid.item_id) {
+      const x = checkDup.map((x) => {
+        if (x.item.item_id === finditemid.item_id && x.deletedAt === null) {
+          console.log(x);
           throw new HttpException('4101', 400);
         }
       });
@@ -177,6 +181,7 @@ export class CartsService {
    * @param user
    * @returns
    */
+
   async deleteOne(user, item_id: number): Promise<Cart_Item[]> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();

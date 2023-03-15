@@ -1,12 +1,13 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from 'src/carts/cart.entity';
-import { CartsController } from 'src/carts/carts.controller';
 import { CartsService } from 'src/carts/carts.service';
 import { Cart_Item } from 'src/carts/cart_item.entity';
 import { Item } from 'src/items/items.entity';
+import { Member } from 'src/members/members.entity';
 import { Point } from 'src/members/point.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Equal, QueryRunner, Repository } from 'typeorm';
+import { CancelOrderDto } from './dto/cancleOrders.dto';
 import { CreateOrdersDto } from './dto/createOrders.dto';
 import { Order } from './orders.entity';
 import { Order_Item } from './order_item.entity';
@@ -27,108 +28,82 @@ export class OrdersService {
     @InjectRepository(Cart)
     private readonly cartRepository: Repository<Cart>,
     private readonly dataSource: DataSource,
-    private readonly cartsService: CartsService, // private readonly cartsController: CartsController,
+    private readonly cartsService: CartsService,
   ) {}
 
-  //1) 주문 저장하기
-  async create(user, order): Promise<Order> {
-    console.log(' order: ', order);
-    //주문 수량이 재고 수 보다 많은지 확인 후 주문 하는 트랜잭션 시작
-    const checkStock = await this.itemRepository.findOne({ where: { item_id: order.item_id } });
-    console.log('checkStock: ', checkStock);
-    console.log('order.item_id: ', order.item_id);
-    if ((await checkStock).stockquantity < order.count) {
-      throw new HttpException('2100', 400);
-    }
+  // 1) create order
+  async createOrder(user: Member, order: CreateOrdersDto): Promise<Order> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
-    await queryRunner.startTransaction();
+
     try {
-      // 회원의 포인트 잔액을 확인 한다
-      const checkPoint = await this.pointRepository.findOne({ where: { member: user.member_id } });
-      console.log('member: user.member_id: ', user.member_id);
-      console.log('checkPoint: ', checkPoint);
-      if (checkPoint.point < order.price) {
-        console.log('checkPoint: ', checkPoint);
+      await queryRunner.startTransaction();
+
+      // 1. Check stock quantity
+      const item = await this.itemRepository.findOne({
+        where: { item_id: order.item_id },
+      });
+      if (!item || item.stockquantity < order.count) {
+        throw new HttpException('2100', 400);
+      }
+      const updatedItem = item.stockquantity - order.count;
+
+      await this.itemRepository.save({ ...item, stockquantity: updatedItem });
+      console.log('updatedItem: ', updatedItem);
+
+      // 2. Check point balance
+      const checkPoint = await this.pointRepository.findOne({ where: { member: Equal(user.member_id) } });
+      if (!checkPoint || checkPoint.point < order.price) {
         throw new HttpException('2101', 400);
       }
-      const point = checkPoint.point - order.price;
-      console.log('point: ', point);
+      const updatedPoint = checkPoint.point - order.price;
+      await this.pointRepository.save({ ...checkPoint, point: updatedPoint });
+      console.log('updatedPoint: ', updatedPoint);
 
-      const isupdatedPoint = await queryRunner.manager.getRepository(Point).create({ point: point });
-      const isupdated = await queryRunner.manager.getRepository(Point).update(user.member_id, isupdatedPoint);
-      //회원의 배송지, 주문 정보를 order table에 저장 시킨다
-      const data = new Order();
-      data.count = order.count;
-      data.city = order.city;
-      data.price = order.price;
-      data.phone = order.phone;
-      data.status = order.status;
-      data.street = order.street;
-      data.member = order.member_id;
-      data.zipcode = order.zipcode;
-      const create = await queryRunner.manager.getRepository(Order).create(data);
-      console.log('create: ', create);
+      // 3. Create order entity
+      const orderEntity = new Order();
+      orderEntity.count = order.count;
+      orderEntity.city = order.city;
+      orderEntity.price = order.price;
+      orderEntity.status = order.status;
+      orderEntity.street = order.street;
+      orderEntity.phone = order.phone;
+      orderEntity.member = user;
+      orderEntity.zipcode = order.zipcode;
+      const createdOrder = await this.orderRepository.save(orderEntity);
+      console.log('createdOrder: ', createdOrder);
 
-      const orderSave = await queryRunner.manager.getRepository(Order).save(create);
+      // 4. Create order item entity
+      const orderItemEntity = new Order_Item();
+      orderItemEntity.order = createdOrder;
+      orderItemEntity.item = item;
+      const createdOrderItem = await this.order_itemRepository.save(orderItemEntity);
+      console.log('createdOrderItem: ', createdOrderItem);
 
-      // 저장된 주문 정보에서 order_id와 item_id를 조회해서 order_item 테이블에 저장시킨다
-      const finditemid = order.item_id;
-      const orderitemSave = await queryRunner.manager.getRepository(Order_Item).save({
-        order: orderSave,
-        item: finditemid,
-      });
-      console.log('orderitemSave: ', orderitemSave);
-      // //장바구니에서 주문한 상품을 삭제한다
-      const findCartItem = await this.cartItemRepository
-
+      // 5. Delete cart item
+      const cartItem = await this.cartItemRepository
         .createQueryBuilder('cartitem')
         .leftJoinAndSelect('cartitem.cart', 'cart')
         .leftJoinAndSelect('cartitem.item', 'item')
-        .where('item.item_id = :item_id', { item_id: finditemid })
-        .getMany();
-      console.log('findCartItem: ', findCartItem);
-      if (findCartItem) {
-        const findcart = findCartItem.map((x) => parseInt(x.cart.cart_id.toString(), 10) === user.member_id);
-        const cartid = findCartItem.map((x) => x.cart.cart_id);
-        const countupdate = findCartItem.map((x) => x.cart.count - x.itemCount);
-        const priceupdate = findCartItem.map((x) => x.cart.price - x.itemCount * x.item.price);
-        const findcartitemid = findCartItem.map((x) => x.cart_item_id);
-        //cart 테이블 수정
-        for (let i = 0; i < findcart.length; i++) {
-          const cart_id = cartid[i];
-          console.log('cart_id: ', cart_id);
-          const cart = await queryRunner.manager.getRepository(Cart).findOne({ where: { cart_id } });
-          console.log('cart: ', cart);
-          const isupdated = await queryRunner.manager
+        .where('item.item_id = :item_id', { item_id: order.item_id })
+        .andWhere('cart.member_id= :member_id', { member_id: user.member_id })
+        .getOne();
 
-            .getRepository(Cart)
-            .update(cart_id, { count: countupdate[i], price: priceupdate[i] });
-          console.log('updated: ', isupdated);
-        }
-        //cart_item 테이블에서 itemCount 0 변경후 softDelete
-        for (let i = 0; i < findcartitemid.length; i++) {
-          const cart_item_id = parseInt(findcartitemid[i].toString(), 10);
-          console.log('cart_item_id: ', cart_item_id);
-          await queryRunner.manager.getRepository(Cart_Item).findOne({ where: { cart_item_id } });
-          const zero = 0;
-          const updatecartItem = await queryRunner.manager
-            .getRepository(Cart_Item)
-            .update(cart_item_id, { itemCount: zero });
-          const deleted = await queryRunner.manager.getRepository(Cart_Item).softDelete(cart_item_id);
-          console.log('updatecartItem: ', updatecartItem);
-        }
-        //item 재고수량 차감
-        const updatestock = checkStock.stockquantity - order.count;
-        console.log('updatestock: ', updatestock);
-        const isupdatedStock = await queryRunner.manager
-          .getRepository(Item)
-          .update(checkStock.item_id, { stockquantity: updatestock });
+      if (cartItem) {
+        await this.cartItemRepository.softRemove(cartItem);
+        const cart = await this.cartRepository.findOne({ where: { member: Equal(user.member_id) } });
+        cart.count -= order.count;
+        cart.price -= order.price;
+        await this.cartRepository.save(cart);
+
+        console.log('cart: ', cart);
+      } else if (!cartItem) {
+        throw new HttpException('2102', 400);
       }
 
       await queryRunner.commitTransaction();
 
-      return order;
+      return createdOrder;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
@@ -136,57 +111,41 @@ export class OrdersService {
       await queryRunner.release();
     }
   }
-
-  //2) 주문취소 하기
-  async cancel(user, order_id, cancel): Promise<Order> {
-    console.log('cancel: ', cancel);
-    console.log('order_item_id: ', order_id);
-    const orderid = parseInt(order_id);
-    const checkorder = await this.orderRepository.findOne({ where: { order_id: orderid } });
-    console.log('checkorder: ', checkorder);
-    if (!checkorder) {
-      throw new HttpException('2102', 400);
-    }
+  // 2) cancel order
+  async cancelOrder(user: Member, order_id: number, cancel: CancelOrderDto): Promise<Order> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
+
     try {
       await queryRunner.startTransaction();
 
-      //삭제할 주문 정보 찾기
-      const checkItem = await this.order_itemRepository
-        .createQueryBuilder('orderitem')
-        .leftJoinAndSelect('orderitem.order', 'order')
-        .leftJoinAndSelect('orderitem.item', 'item')
-        .where('order.order_id = :order_id', { order_id: orderid })
-        .andWhere('item.item_id = :item_id', { item_id: cancel.item_id })
-        .getOne();
-      console.log('checkItem: ', checkItem);
+      // 1. Find the order to be cancelled
+      const order = await this.orderRepository.findOne({ where: { order_id }, relations: ['order_item'] });
+      if (!order) {
+        throw new HttpException('2102', 400);
+      }
 
-      //주문 정보 삭제하기
-      const deleteOrder = await queryRunner.manager.getRepository(Order).softDelete(checkItem.order.order_id);
-      const deleteOrderItem = await queryRunner.manager.getRepository(Order_Item).softDelete(checkItem.order_item_id);
+      // 2. Soft remove the order and its order items
+      await this.order_itemRepository.softRemove(order.order_item);
+      await this.orderRepository.softRemove(order);
 
-      //재고 되돌리기
-      const checkStock = await this.itemRepository.findOne({ where: { item_id: checkItem.item.item_id } });
-      const stock = checkStock.stockquantity + cancel.count;
-      const restock = await queryRunner.manager
-        .getRepository(Item)
-        .update(checkStock.item_id, { stockquantity: stock });
-      console.log('restock: ', restock);
+      // 3. Update the member's point balance
+      const point = await this.pointRepository.findOne({ where: { member: Equal(user.member_id) } });
+      const updatedPoint = point.point + cancel.price;
+      await this.pointRepository.save({ ...point, point: updatedPoint });
 
-      //point 환불하기
-      const checkPoint = await this.pointRepository.findOne({ where: { member: user.member_id } });
-      console.log('checkPoint: ', checkPoint);
-      const point = checkPoint.point + cancel.price;
-      console.log('point: ', point);
-      const refund = await queryRunner.manager.getRepository(Point).update(user.member_id, { point: point });
-      console.log('refund: ', refund);
+      // 4. Update the stock quantity of the cancelled item
+      const item = await this.itemRepository.findOne({ where: { item_id: cancel.item_id } });
+      const updatedStock = item.stockquantity + cancel.count;
+      await this.itemRepository.save({ ...item, stockquantity: updatedStock });
 
+      // 5. Commit the transaction
       await queryRunner.commitTransaction();
 
-      return;
+      return order;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      throw error;
     } finally {
       await queryRunner.release();
     }

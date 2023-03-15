@@ -23,10 +23,10 @@ export class OrdersController {
   @ApiOperation({ summary: '주문 완료' })
   @UseGuards(JwtAuthGuard)
   @Post('/')
-  async create(@CurrentUser() user: Member, @Body() order: CreateOrdersDto): Promise<Order> {
+  async createOrder(@CurrentUser() user: Member, @Body() order: CreateOrdersDto): Promise<Order> {
     console.log('user: ', user);
     order.member_id = user.member_id;
-    const result = await this.ordersService.create(user, order);
+    const result = await this.ordersService.createOrder(user, order);
     return result;
   }
   @ApiResponse({
@@ -36,12 +36,12 @@ export class OrdersController {
   @ApiOperation({ summary: '주문 취소' })
   @UseGuards(JwtAuthGuard)
   @Post('/cancel/:order_id')
-  async cancle(
+  async cancelOrder(
     @CurrentUser() user: Member,
     @Param('order_id') order_id: number,
     @Body() cancel: CancelOrderDto,
   ): Promise<Order> {
-    const result = await this.ordersService.cancel(user, order_id, cancel);
+    const result = await this.ordersService.cancelOrder(user, order_id, cancel);
     return result;
   }
 }

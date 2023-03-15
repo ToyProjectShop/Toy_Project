@@ -36,8 +36,8 @@ export class Order extends BaseEntity {
   @Column({ type: 'integer' })
   zipcode: number;
 
-  @Column({ type: 'char', length: 11 })
-  phone: number;
+  @Column({ type: 'char', length: 10 })
+  phone: string;
 
   @ManyToOne(() => Member, (member) => member.order)
   @JoinColumn([

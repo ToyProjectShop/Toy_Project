@@ -1,5 +1,5 @@
 import { BaseEntity } from './../common/baseEntity/base.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, VersionColumn } from 'typeorm';
 import { Category } from '../category/category.entity';
 import { Order_Item } from '../orders/order_item.entity';
 import { Cart_Item } from '../carts/cart_item.entity';
@@ -24,8 +24,8 @@ export class Item extends BaseEntity {
   stockquantity: number;
 
   @ManyToOne(() => Category, (category) => category.item, {
-    onDelete:'CASCADE',
-    onUpdate:'CASCADE'
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn([
     {
@@ -35,9 +35,12 @@ export class Item extends BaseEntity {
   ])
   category: Category;
 
-  @OneToMany(() => Order_Item, (order_item) => order_item.item,{cascade:true})
+  @OneToMany(() => Order_Item, (order_item) => order_item.item, { cascade: true })
   order_item: Order_Item[];
 
-  @OneToMany(() => Cart_Item, (cart_item) => cart_item.item,{cascade:true})
+  @OneToMany(() => Cart_Item, (cart_item) => cart_item.item, { cascade: true })
   cart_item: Cart_Item[];
+
+  @VersionColumn()
+  version: number;
 }
